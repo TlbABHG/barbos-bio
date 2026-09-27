@@ -187,14 +187,37 @@
 <script>
   document.getElementById('copyBtn').addEventListener('click', function () {
     var label = document.getElementById('copyLabel');
-    function done() {
+    var text = 'https://t.me/BarbosAnalytic';
+
+    function showDone() {
       label.textContent = 'Copié !';
       setTimeout(function () { label.textContent = 'Copier'; }, 2000);
     }
+
+    function fallbackCopy() {
+      var textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      textarea.style.top = '0';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(textarea);
+      if (ok) {
+        showDone();
+      } else {
+        label.textContent = 'Sélectionne et copie le lien ci-dessus';
+        setTimeout(function () { label.textContent = 'Copier'; }, 2500);
+      }
+    }
+
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText('https://t.me/BarbosAnalytic').then(done).catch(done);
+      navigator.clipboard.writeText(text).then(showDone).catch(fallbackCopy);
     } else {
-      done();
+      fallbackCopy();
     }
   });
 </script>
