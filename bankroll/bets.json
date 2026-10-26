@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-26T13:57:29.837Z"
+    "updatedAt": "2026-10-26T13:58:31.099Z"
   },
   "bets": [
     {
@@ -116,6 +116,16 @@
       "pick": "NAVI gagne",
       "odds": 1.5,
       "result": "pending",
+      "stake": 500
+    },
+    {
+      "id": "bmvpbnyyjj7eu",
+      "date": "2026-10-17",
+      "tournament": "TWC",
+      "match": "Falcons vs BetBoom",
+      "pick": "Falcons map 1 gagnant",
+      "odds": 1.48,
+      "result": "won",
       "stake": 500
     }
   ]
