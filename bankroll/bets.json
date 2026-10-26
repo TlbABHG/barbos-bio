@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-26T13:55:28.730Z"
+    "updatedAt": "2026-10-26T13:55:57.392Z"
   },
   "bets": [
     {
@@ -75,6 +75,16 @@
       "match": "G2 vs NAVI",
       "pick": "NAVI gagne",
       "odds": 1.68,
+      "result": "won",
+      "stake": 500
+    },
+    {
+      "id": "bmvpbkocw1put",
+      "date": "2026-10-25",
+      "tournament": "PGL Bucharest 2026",
+      "match": "Legacy vs DENDELE CS",
+      "pick": "Legacy gagne",
+      "odds": 1.3,
       "result": "won",
       "stake": 500
     }
