@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-26T13:56:44.696Z"
+    "updatedAt": "2026-10-26T13:57:08.048Z"
   },
   "bets": [
     {
@@ -95,6 +95,16 @@
       "match": "Spirit vs FURIA",
       "pick": "Spirit gagne",
       "odds": 1.5,
+      "result": "pending",
+      "stake": 500
+    },
+    {
+      "id": "bmvpbm6vk54fx",
+      "date": "2026-10-26",
+      "tournament": "PGL Bucharest 2026",
+      "match": "Liquid vs Legacy",
+      "pick": "Legacy gagne",
+      "odds": 1.42,
       "result": "pending",
       "stake": 500
     }
