@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-26T19:03:31.991Z"
+    "updatedAt": "2026-10-26T19:03:39.244Z"
   },
   "bets": [
     {
@@ -105,16 +105,6 @@
       "match": "Liquid vs Legacy",
       "pick": "Legacy gagne",
       "odds": 1.42,
-      "result": "pending",
-      "stake": 500
-    },
-    {
-      "id": "bmvpbmnot1m33",
-      "date": "2026-10-26",
-      "tournament": "PGL Bucharest 2026",
-      "match": "BetBoom vs NAVI",
-      "pick": "NAVI gagne",
-      "odds": 1.5,
       "result": "pending",
       "stake": 500
     },
