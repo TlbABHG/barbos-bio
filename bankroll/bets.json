@@ -1,8 +1,8 @@
 {
   "settings": {
-    "startBankroll": 100,
+    "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": null
+    "updatedAt": "2026-10-26T13:33:35.257Z"
   },
   "bets": []
 }
