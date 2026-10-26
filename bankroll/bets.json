@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-26T13:49:31.371Z"
+    "updatedAt": "2026-10-26T13:50:42.050Z"
   },
   "bets": [
     {
@@ -35,6 +35,16 @@
       "match": "MIBR vs BC.Game",
       "pick": "MIBR gagne",
       "odds": 1.58,
+      "result": "won",
+      "stake": 500
+    },
+    {
+      "id": "bmvpbdx1eyp4x",
+      "date": "2026-10-16",
+      "tournament": "TWC",
+      "match": "Aurora vs 9z",
+      "pick": "Aurora Vainqueur",
+      "odds": 1.4,
       "result": "won",
       "stake": 500
     }
