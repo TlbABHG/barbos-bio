@@ -28,7 +28,7 @@
     return {
       settings: {
         startBankroll: settings.startBankroll == null ? 100 : num(settings.startBankroll),
-        unit: settings.unit || 'u',
+        unit: settings.unit || '€',
         updatedAt: settings.updatedAt || null
       },
       bets: (Array.isArray(data.bets) ? data.bets : []).filter(function (b) {

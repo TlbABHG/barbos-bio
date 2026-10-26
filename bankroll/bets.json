@@ -1,7 +1,7 @@
 {
   "settings": {
     "startBankroll": 100,
-    "unit": "u",
+    "unit": "€",
     "updatedAt": null
   },
   "bets": []

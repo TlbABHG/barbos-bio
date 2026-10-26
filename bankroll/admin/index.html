@@ -93,7 +93,7 @@
         <label class="wide">Match <input name="match" required placeholder="Vitality vs MOUZ"></label>
         <label class="wide">Pari <input name="pick" required placeholder="Vitality gagne · +1,5 map · Over 2,5 maps…"></label>
         <label>Cote <input name="odds" type="number" step="0.01" min="1.01" inputmode="decimal" required placeholder="1.85"></label>
-        <label><span>Mise (<span class="unit-label">u</span>)</span> <input name="stake" type="number" step="0.01" min="0.01" inputmode="decimal" required placeholder="1"></label>
+        <label><span>Mise (<span class="unit-label">€</span>)</span> <input name="stake" type="number" step="0.01" min="0.01" inputmode="decimal" required placeholder="10"></label>
         <label class="wide">Résultat
           <select name="result">
             <option value="pending">En attente</option>
@@ -124,13 +124,7 @@
     <section class="card">
       <h2 class="section">Réglages</h2>
       <form id="settingsForm" class="form">
-        <label>Bankroll de départ <input name="startBankroll" type="number" step="0.01" min="0" inputmode="decimal" required></label>
-        <label>Unité
-          <select name="unit">
-            <option value="u">Unités (u)</option>
-            <option value="€">Euros (€)</option>
-          </select>
-        </label>
+        <label class="wide">Bankroll de départ (€) <input name="startBankroll" type="number" step="0.01" min="0" inputmode="decimal" required></label>
         <div class="wide"><button class="btn" type="submit">Enregistrer les réglages</button></div>
       </form>
     </section>
@@ -293,7 +287,6 @@
 
     if (!settingsForm.contains(document.activeElement)) {
       settingsForm.elements.startBankroll.value = d.settings.startBankroll;
-      settingsForm.elements.unit.value = d.settings.unit === '€' ? '€' : 'u';
     }
   }
 
@@ -394,10 +387,10 @@
 
   settingsForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    var start = B.round2(parseFloat(settingsForm.elements.startBankroll.value)), unit = settingsForm.elements.unit.value;
+    var start = B.round2(parseFloat(settingsForm.elements.startBankroll.value));
     if (!(start >= 0)) { toast('error', 'La bankroll de départ doit être un nombre positif.'); return; }
     document.activeElement.blur();
-    commit(function (d) { d.settings.startBankroll = start; d.settings.unit = unit; }, 'Bankroll : réglages');
+    commit(function (d) { d.settings.startBankroll = start; d.settings.unit = '€'; }, 'Bankroll : réglages');
   });
 
   $('loginForm').addEventListener('submit', function (e) {
