@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-26T13:51:21.764Z"
+    "updatedAt": "2026-10-26T13:52:08.698Z"
   },
   "bets": [
     {
@@ -55,6 +55,16 @@
       "match": "Liquid vs Fnatic",
       "pick": "Vainqueur Liquid",
       "odds": 1.58,
+      "result": "won",
+      "stake": 500
+    },
+    {
+      "id": "bmvpbfrwalg91",
+      "date": "2026-10-16",
+      "tournament": "Private Club Season 2",
+      "match": "Fnatic vs PARIVISION",
+      "pick": "PARIVISION gagne",
+      "odds": 1.42,
       "result": "won",
       "stake": 500
     }
