@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-26T13:53:42.401Z"
+    "updatedAt": "2026-10-26T13:53:57.566Z"
   },
   "bets": [
     {
@@ -60,7 +60,7 @@
     },
     {
       "id": "bmvpbfrwalg91",
-      "date": "2026-10-16",
+      "date": "2026-10-20",
       "tournament": "Private Club Season 2",
       "match": "Fnatic vs PARIVISION",
       "pick": "PARIVISION gagne",
