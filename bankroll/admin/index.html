@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin bankroll · Barbos Analytic</title>
+<link rel="icon" href="../../images/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/bankroll.css">
+<style>
+  .app{display:flex;flex-direction:column;gap:22px}
+  .app[hidden],[hidden]{display:none !important}
+  .card > .section{margin-bottom:14px}
+  #summary .stats{grid-template-columns:repeat(4,1fr)}
+  @media (max-width:560px){ #summary .stats{grid-template-columns:repeat(2,1fr)} }
+  .note{margin:0;font-size:13.5px;color:var(--muted)}
+  .note b{color:var(--text)}
+  .howto{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+  .howto a{color:var(--gold);text-decoration:underline}
+  .local-badge{align-self:flex-start;padding:6px 12px;border-radius:999px;background:rgba(250,178,25,.14);font-size:12.5px;font-weight:700}
+
+  .form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:700;color:var(--muted)}
+  .form .wide{grid-column:1 / -1}
+  .form input,.form select,.search{width:100%;min-height:44px;padding:10px 12px;border-radius:10px;
+    background:var(--bg);border:1px solid var(--line-strong);font-size:15px;font-weight:500;color:var(--text)}
+  .form input:focus,.form select:focus,.search:focus{outline:none;border-color:var(--gold)}
+  .form input::placeholder,.search::placeholder{color:var(--faint)}
+  input[type=date]{color-scheme:dark}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .row > input{flex:1 1 220px}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 18px;border-radius:12px;cursor:pointer;
+    border:1.5px solid var(--gold);background:transparent;color:var(--gold);font-size:15px;font-weight:700}
+  .btn.solid{background:var(--gold);color:var(--bg)}
+  .btn:hover{box-shadow:0 6px 16px rgba(197,160,89,.25)}
+  .btn:disabled{opacity:.5;cursor:wait}
+
+  .bet-actions{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;padding-top:10px;margin-top:4px;border-top:1px solid var(--line)}
+  .mini{min-height:36px;padding:0 12px;border-radius:9px;border:1px solid var(--line-strong);background:var(--panel-2);
+    font-size:13px;font-weight:700;cursor:pointer}
+  .mini:hover{border-color:var(--gold)}
+  .mini-won{border-color:rgba(12,163,12,.6)} .mini-lost{border-color:rgba(208,59,59,.6)}
+  .mini-danger{margin-left:auto;color:var(--neg);background:transparent}
+
+  .toast{position:fixed;left:50%;bottom:16px;z-index:10;transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);
+    padding:11px 16px;border-radius:12px;background:#0A0E13;border:1px solid var(--line-strong);box-shadow:0 12px 30px rgba(0,0,0,.5);
+    font-size:14px;font-weight:600}
+  .toast.ok{border-color:rgba(12,163,12,.7)}
+  .toast.error{border-color:rgba(208,59,59,.8)}
+  .linkbtn{background:none;border:none;padding:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
+  .editing{outline:2px solid var(--gold);outline-offset:-1px}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <img src="../../images/logo.webp" alt="">
+      <div><b>Barbos Analytic</b><small>Admin bankroll</small></div>
+    </div>
+    <a class="top-link" href="../" target="_blank" rel="noopener">Page publique ↗</a>
+  </header>
+
+  <section id="login" class="card app" hidden>
+    <h1 class="detail-title">Connexion</h1>
+    <p class="note">Pour ajouter ou modifier des paris, cette page enregistre le fichier <b>bankroll/bets.json</b> dans ton dépôt GitHub <b>barbos-bio</b>. Il lui faut un token GitHub, qui reste uniquement dans ce navigateur.</p>
+    <ol class="howto">
+      <li>Ouvre <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub → nouveau « Fine-grained token »</a>.</li>
+      <li>Repository access : <b>Only select repositories</b> → <b>barbos-bio</b>.</li>
+      <li>Permissions → Repository permissions → <b>Contents : Read and write</b>.</li>
+      <li>Génère le token, copie-le et colle-le ici.</li>
+    </ol>
+    <form id="loginForm" class="row">
+      <input id="token" class="search" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…" required aria-label="Token GitHub">
+      <button class="btn solid" type="submit">Se connecter</button>
+    </form>
+  </section>
+
+  <div id="app" class="app" hidden>
+    <span id="localBadge" class="local-badge" hidden>Mode test local : rien n’est envoyé sur GitHub</span>
+    <div id="summary"></div>
+
+    <section id="formCard" class="card">
+      <h2 class="section" id="formTitle">Nouveau pari</h2>
+      <form id="betForm" class="form" autocomplete="off">
+        <label>Date <input name="date" type="date" required></label>
+        <label>Tournoi <input name="tournament" list="tournamentList" required placeholder="IEM Chengdu 2026"></label>
+        <label class="wide">Match <input name="match" required placeholder="Vitality vs MOUZ"></label>
+        <label class="wide">Pari <input name="pick" required placeholder="Vitality gagne · +1,5 map · Over 2,5 maps…"></label>
+        <label>Cote <input name="odds" type="number" step="0.01" min="1.01" inputmode="decimal" required placeholder="1.85"></label>
+        <label><span>Mise (<span class="unit-label">u</span>)</span> <input name="stake" type="number" step="0.01" min="0.01" inputmode="decimal" required placeholder="1"></label>
+        <label class="wide">Résultat
+          <select name="result">
+            <option value="pending">En attente</option>
+            <option value="won">Gagné</option>
+            <option value="lost">Perdu</option>
+            <option value="void">Remboursé</option>
+          </select>
+        </label>
+        <div class="wide row">
+          <button id="submitBtn" class="btn solid" type="submit">Ajouter le pari</button>
+          <button id="cancelEdit" class="btn" type="button" hidden>Annuler</button>
+        </div>
+      </form>
+      <datalist id="tournamentList"></datalist>
+    </section>
+
+    <section class="block">
+      <h2 class="section" id="pendingTitle">En attente de résultat</h2>
+      <div id="pending"></div>
+    </section>
+
+    <section class="block">
+      <h2 class="section">Paris terminés</h2>
+      <input id="search" class="search" type="search" placeholder="Rechercher une équipe, un tournoi…" aria-label="Rechercher un pari">
+      <div id="history"></div>
+    </section>
+
+    <section class="card">
+      <h2 class="section">Réglages</h2>
+      <form id="settingsForm" class="form">
+        <label>Bankroll de départ <input name="startBankroll" type="number" step="0.01" min="0" inputmode="decimal" required></label>
+        <label>Unité
+          <select name="unit">
+            <option value="u">Unités (u)</option>
+            <option value="€">Euros (€)</option>
+          </select>
+        </label>
+        <div class="wide"><button class="btn" type="submit">Enregistrer les réglages</button></div>
+      </form>
+    </section>
+
+    <p class="note"><button id="logout" class="linkbtn" type="button">Se déconnecter de ce navigateur</button></p>
+  </div>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="../assets/bankroll.js"></script>
+<script>
+(function () {
+  'use strict';
+  var B = window.Bankroll, el = B.el;
+  var OWNER = 'TlbABHG', REPO = 'barbos-bio', BRANCH = 'main', FILE = 'bankroll/bets.json';
+  var API = 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/' + FILE;
+  var TOKEN_KEY = 'barbos-bankroll-token', LOCAL_KEY = 'barbos-bankroll-local';
+  // Sur localhost avec ?local, les paris restent dans ce navigateur : pratique pour tester sans toucher au site.
+  var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && /[?&]local\b/.test(location.search);
+
+  var $ = function (id) { return document.getElementById(id); };
+  var form = $('betForm'), settingsForm = $('settingsForm');
+  var state = { data: null, sha: null, editId: null, queue: Promise.resolve() };
+  var token = storage('get', TOKEN_KEY) || '';
+
+  function storage(op, key, value) {
+    try {
+      if (op === 'get') return localStorage.getItem(key);
+      if (op === 'set') localStorage.setItem(key, value);
+      if (op === 'remove') localStorage.removeItem(key);
+    } catch (e) { /* stockage bloqué : le token ne sera simplement pas mémorisé */ }
+    return null;
+  }
+
+  /* ---------- Lecture / écriture du fichier ---------- */
+
+  function toBase64(str) {
+    var bytes = new TextEncoder().encode(str), bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+  function fromBase64(b64) {
+    var bin = atob(b64.replace(/\s/g, ''));
+    return new TextDecoder().decode(Uint8Array.from(bin, function (c) { return c.charCodeAt(0); }));
+  }
+
+  function github(method, body) {
+    var headers = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+    if (body) headers['Content-Type'] = 'application/json';
+    var url = API + (method === 'GET' ? '?ref=' + BRANCH + '&t=' + Date.now() : '');
+    return fetch(url, { method: method, headers: headers, cache: 'no-store', body: body ? JSON.stringify(body) : undefined })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          if (r.ok) return j;
+          var e = new Error(j.message || 'Erreur ' + r.status);
+          e.status = r.status;
+          throw e;
+        });
+      });
+  }
+
+  var store = LOCAL ? {
+    load: function () {
+      var saved = storage('get', LOCAL_KEY);
+      if (saved) return Promise.resolve({ data: JSON.parse(saved), sha: 'local' });
+      return fetch('../bets.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
+        .then(function (d) { return { data: d, sha: 'local' }; });
+    },
+    save: function (data) { storage('set', LOCAL_KEY, JSON.stringify(data)); return Promise.resolve('local'); }
+  } : {
+    load: function () {
+      return github('GET').then(function (j) { return { data: JSON.parse(fromBase64(j.content)), sha: j.sha }; });
+    },
+    save: function (data, sha, message) {
+      return github('PUT', { message: message, content: toBase64(JSON.stringify(data, null, 2) + '\n'), sha: sha, branch: BRANCH })
+        .then(function (j) { return j.content.sha; });
+    }
+  };
+
+  function explain(e) {
+    if (!e.status) return 'Impossible de joindre GitHub. Vérifie ta connexion internet.';
+    if (e.status === 401) return 'Token refusé (invalide ou expiré). Connecte-toi avec un nouveau token.';
+    if (e.status === 403 || e.status === 404) return 'Ce token n’a pas accès à bankroll/bets.json dans barbos-bio. Il faut « Contents : Read and write » sur ce dépôt.';
+    if (e.status === 409 || e.status === 422) return 'Le fichier a changé ailleurs entre-temps. Les paris ont été rechargés : refais ta dernière action.';
+    return 'Erreur GitHub : ' + e.message;
+  }
+
+  var toastTimer;
+  function toast(kind, msg) {
+    var t = $('toast');
+    clearTimeout(toastTimer);
+    if (!msg) { t.hidden = true; return; }
+    t.className = 'toast ' + (kind || '');
+    t.textContent = msg;
+    t.hidden = false;
+    if (kind === 'ok') toastTimer = setTimeout(function () { t.hidden = true; }, 4000);
+  }
+
+  function load() {
+    toast('', 'Chargement des paris…');
+    return store.load().then(function (res) {
+      state.data = B.normalize(res.data);
+      state.sha = res.sha;
+      state.data.bets.forEach(function (b) { if (!b.id) b.id = newId(); });
+      $('login').hidden = true;
+      $('app').hidden = false;
+      toast();
+      render();
+    }, function (e) {
+      if (e.status === 401 || e.status === 403 || e.status === 404) logout(false);
+      toast('error', explain(e));
+    });
+  }
+
+  // Chaque action = un enregistrement (un commit). Les actions passent l'une après l'autre.
+  function commit(mutate, message) {
+    state.queue = state.queue.then(function () {
+      var next = JSON.parse(JSON.stringify(state.data));
+      mutate(next);
+      next.settings.updatedAt = new Date().toISOString();
+      toast('', 'Enregistrement…');
+      return store.save(next, state.sha, message).then(function (sha) {
+        state.data = next;
+        state.sha = sha;
+        render();
+        toast('ok', LOCAL ? 'Enregistré (test local).' : 'Enregistré. Visible sur la page publique d’ici 1 à 2 minutes.');
+        return true;
+      }, function (e) {
+        if (e.status === 409 || e.status === 422) return load().then(function () { toast('error', explain(e)); return false; });
+        if (e.status === 401) logout(false);
+        toast('error', explain(e));
+        return false;
+      });
+    });
+    return state.queue;
+  }
+
+  function newId() { return 'b' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function find(data, id) { return data.bets.filter(function (b) { return b.id === id; })[0]; }
+
+  /* ---------- Affichage ---------- */
+
+  function render() {
+    var d = state.data, unit = d.settings.unit, s = B.stats(d.bets);
+    var pending = d.bets.filter(function (b) { return b.result === 'pending'; });
+
+    B.fill($('summary'), [B.statTiles(s, unit, [
+      ['Profit', B.signed(s.profit, unit), B.tone(s.profit)],
+      ['Bankroll', B.money(d.settings.startBankroll + s.profit, unit)],
+      ['Paris', String(d.bets.length), null, pending.length ? pending.length + ' en attente' : null]
+    ])]);
+
+    document.querySelectorAll('.unit-label').forEach(function (n) { n.textContent = unit; });
+    var names = Array.from(B.byTournament(d.bets).keys()).reverse();
+    B.fill($('tournamentList'), names.map(function (n) { return el('option', { value: n }); }));
+
+    $('pendingTitle').textContent = 'En attente de résultat (' + pending.length + ')';
+    B.fill($('pending'), [B.betList(pending, unit, { limit: 100, actions: actionsFor, emptyText: 'Aucun pari en attente.' })]);
+    renderHistory();
+
+    if (!settingsForm.contains(document.activeElement)) {
+      settingsForm.elements.startBankroll.value = d.settings.startBankroll;
+      settingsForm.elements.unit.value = d.settings.unit === '€' ? '€' : 'u';
+    }
+  }
+
+  function renderHistory() {
+    var d = state.data, q = $('search').value.trim().toLowerCase();
+    var done = d.bets.filter(function (b) {
+      if (b.result === 'pending') return false;
+      return !q || [b.match, b.tournament, b.pick, b.date].join(' ').toLowerCase().indexOf(q) >= 0;
+    });
+    B.fill($('history'), [B.betList(done, d.settings.unit, {
+      limit: 30, actions: actionsFor, emptyText: q ? 'Aucun pari ne correspond.' : 'Aucun pari terminé pour l’instant.'
+    })]);
+  }
+
+  function actionsFor(bet) {
+    var box = el('div', { class: 'bet-actions' });
+    if (bet.result === 'pending') {
+      [['won', '✓ Gagné'], ['lost', '✕ Perdu'], ['void', '↺ Remboursé']].forEach(function (r) {
+        box.appendChild(el('button', { type: 'button', class: 'mini mini-' + r[0], text: r[1], onclick: function () { setResult(bet.id, r[0]); } }));
+      });
+    }
+    box.appendChild(el('button', { type: 'button', class: 'mini', text: 'Modifier', onclick: function () { edit(bet.id); } }));
+    box.appendChild(el('button', { type: 'button', class: 'mini mini-danger', text: 'Supprimer', onclick: function () { remove(bet.id); } }));
+    return box;
+  }
+
+  /* ---------- Actions ---------- */
+
+  function setResult(id, result) {
+    var bet = find(state.data, id);
+    if (!bet) return;
+    commit(function (d) { find(d, id).result = result; },
+      'Bankroll : ' + bet.match + ' → ' + B.RESULTS[result].label.toLowerCase());
+  }
+
+  function remove(id) {
+    var bet = find(state.data, id);
+    if (!bet || !confirm('Supprimer le pari « ' + bet.match + ' · ' + bet.pick + ' » ?')) return;
+    if (state.editId === id) resetForm(false);
+    commit(function (d) { d.bets = d.bets.filter(function (b) { return b.id !== id; }); }, 'Bankroll : suppression ' + bet.match);
+  }
+
+  function edit(id) {
+    var bet = find(state.data, id);
+    if (!bet) return;
+    state.editId = id;
+    ['date', 'tournament', 'match', 'pick', 'odds', 'stake', 'result'].forEach(function (k) { form.elements[k].value = bet[k] == null ? '' : bet[k]; });
+    $('formTitle').textContent = 'Modifier le pari';
+    $('submitBtn').textContent = 'Enregistrer les modifications';
+    $('cancelEdit').hidden = false;
+    $('formCard').classList.add('editing');
+    $('formCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // keep : garde la date, le tournoi et la mise pour enchaîner les saisies.
+  function resetForm(keep) {
+    var f = form.elements, kept = { date: f.date.value, tournament: f.tournament.value, stake: f.stake.value };
+    form.reset();
+    f.date.value = keep && kept.date ? kept.date : B.today();
+    if (keep) { f.tournament.value = kept.tournament; f.stake.value = kept.stake; }
+    state.editId = null;
+    $('formTitle').textContent = 'Nouveau pari';
+    $('submitBtn').textContent = 'Ajouter le pari';
+    $('cancelEdit').hidden = true;
+    $('formCard').classList.remove('editing');
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var f = form.elements;
+    var bet = {
+      date: f.date.value,
+      tournament: f.tournament.value.trim(),
+      match: f.match.value.trim(),
+      pick: f.pick.value.trim(),
+      odds: B.round2(parseFloat(f.odds.value)),
+      stake: B.round2(parseFloat(f.stake.value)),
+      result: f.result.value
+    };
+    if (!(bet.odds > 1) || !(bet.stake > 0)) { toast('error', 'La cote doit être supérieure à 1 et la mise positive.'); return; }
+    var editId = state.editId, btn = $('submitBtn');
+    btn.disabled = true;
+    commit(function (d) {
+      if (editId) {
+        var i = d.bets.findIndex(function (b) { return b.id === editId; });
+        if (i >= 0) d.bets[i] = Object.assign({ id: editId }, bet);
+      } else {
+        d.bets.push(Object.assign({ id: newId() }, bet));
+      }
+    }, (editId ? 'Bankroll : modification ' : 'Bankroll : ajout ') + bet.match).then(function (ok) {
+      btn.disabled = false;
+      if (ok) { resetForm(true); f.match.focus(); }
+    });
+  });
+
+  $('cancelEdit').addEventListener('click', function () { resetForm(false); });
+  $('search').addEventListener('input', renderHistory);
+
+  settingsForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var start = B.round2(parseFloat(settingsForm.elements.startBankroll.value)), unit = settingsForm.elements.unit.value;
+    if (!(start >= 0)) { toast('error', 'La bankroll de départ doit être un nombre positif.'); return; }
+    document.activeElement.blur();
+    commit(function (d) { d.settings.startBankroll = start; d.settings.unit = unit; }, 'Bankroll : réglages');
+  });
+
+  $('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    token = $('token').value.trim();
+    storage('set', TOKEN_KEY, token);
+    $('token').value = '';
+    load();
+  });
+
+  function logout(reload) {
+    token = '';
+    storage('remove', TOKEN_KEY);
+    if (reload) { location.reload(); return; }
+    $('app').hidden = true;
+    $('login').hidden = false;
+  }
+  $('logout').addEventListener('click', function () { logout(true); });
+
+  resetForm(false);
+  if (LOCAL) { $('localBadge').hidden = false; load(); }
+  else if (token) load();
+  else $('login').hidden = false;
+})();
+</script>
+</body>
+</html>

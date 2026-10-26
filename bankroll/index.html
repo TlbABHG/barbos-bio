@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bankroll · Barbos Analytic</title>
+<meta name="description" content="Tous les résultats des paris CS2 du canal Barbos Analytic : depuis le début, par tournoi et par mois.">
+<meta property="og:title" content="Bankroll · Barbos Analytic">
+<meta property="og:description" content="Tous les résultats des paris du canal : depuis le début, par tournoi et par mois.">
+<meta property="og:image" content="https://barbos-analytic.com/images/logo.webp">
+<meta property="og:url" content="https://barbos-analytic.com/bankroll/">
+<link rel="icon" href="../images/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/bankroll.css">
+</head>
+<body>
+<div class="glow"></div>
+<div class="wrap">
+
+  <header class="top">
+    <a class="brand" href="../">
+      <img src="../images/logo.webp" alt="">
+      <div><b>Barbos Analytic</b><small>Bankroll · CS2</small></div>
+    </a>
+    <a class="top-link" href="https://t.me/BarbosAnalytic">Le canal</a>
+  </header>
+
+  <nav class="tabs" aria-label="Vues des résultats">
+    <a href="#debut">Depuis le début</a>
+    <a href="#tournois">Par tournoi</a>
+    <a href="#mois">Par mois</a>
+  </nav>
+
+  <main id="view" aria-live="polite">
+    <p class="empty">Chargement des résultats…</p>
+  </main>
+
+  <footer class="disclaimer">
+    <p id="updated"></p>
+    <p>Les résultats passés ne garantissent pas les résultats futurs. Interdit aux mineurs.</p>
+    <p>Jouer comporte des risques : endettement, isolement, dépendance. Pour être aidé, appelez le 09 74 75 13 13 (appel non surtaxé).</p>
+  </footer>
+</div>
+
+<script src="assets/bankroll.js"></script>
+<script>
+(function () {
+  'use strict';
+  var B = window.Bankroll, el = B.el;
+  var view = document.getElementById('view'), tabs = document.querySelector('.tabs');
+  var TABS = { debut: 'Depuis le début', tournois: 'Par tournoi', mois: 'Par mois' };
+  var data;
+
+  fetch('bets.json?v=' + Date.now(), { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (d) {
+      data = B.normalize(d);
+      if (data.settings.updatedAt) {
+        document.getElementById('updated').textContent = 'Mis à jour le ' +
+          new Date(data.settings.updatedAt).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' }) + '.';
+      }
+      route();
+      window.addEventListener('hashchange', function () {
+        route();
+        var top = tabs.getBoundingClientRect().top;
+        if (top < 0) window.scrollTo({ top: window.scrollY + top - 12, behavior: 'instant' });
+      });
+    })
+    .catch(function () {
+      B.fill(view, [el('p', { class: 'card empty', text: 'Impossible de charger les résultats. Recharge la page dans un instant.' })]);
+    });
+
+  function route() {
+    var raw = location.hash.slice(1), cut = raw.indexOf('/');
+    var tab = cut < 0 ? raw : raw.slice(0, cut), key = '';
+    if (cut >= 0) { try { key = decodeURIComponent(raw.slice(cut + 1)); } catch (e) { key = ''; } }
+    if (!TABS[tab]) { tab = 'debut'; key = ''; }
+    tabs.querySelectorAll('a').forEach(function (a) {
+      if (a.getAttribute('href') === '#' + tab) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+    var title = TABS[tab];
+    var nodes;
+    if (tab === 'tournois') nodes = key ? tournamentView(key) : tournamentsView();
+    else if (tab === 'mois') nodes = key ? monthView(key) : monthsView();
+    else nodes = overview();
+    if (key) title = tab === 'mois' ? B.monthLabel(key) : key;
+    document.title = title + ' · Bankroll · Barbos Analytic';
+    B.fill(view, nodes);
+  }
+
+  function section(title, content) {
+    return el('section', { class: 'block' }, [el('h2', { class: 'section', text: title }), content]);
+  }
+  function noBets() {
+    return [el('p', { class: 'card empty', text: 'Aucun pari publié pour l’instant. Les résultats apparaîtront ici dès le premier pari.' })];
+  }
+  function pendingOf(bets) { return bets.filter(function (b) { return b.result === 'pending'; }); }
+  function settledOf(bets) { return bets.filter(function (b) { return b.result !== 'pending'; }); }
+
+  // Bloc commun aux vues détaillées : stats, paris en cours, courbe, historique.
+  function details(bets, heroLabel, sub, opts) {
+    var unit = data.settings.unit, s = B.stats(bets), pending = pendingOf(bets);
+    var tiles = opts.extraTiles || [['Paris', String(s.count), null, pending.length ? pending.length + ' en cours' : null]];
+    return [
+      B.hero(heroLabel, s, unit, sub),
+      B.statTiles(s, unit, tiles),
+      pending.length ? section('En cours (' + pending.length + ')', B.betList(pending, unit, opts)) : null,
+      section('Évolution du profit', el('div', { class: 'card' }, [B.profitChart(bets, unit)])),
+      section('Historique', B.betList(settledOf(bets), unit, Object.assign({ emptyText: 'Aucun pari terminé pour l’instant.' }, opts)))
+    ];
+  }
+
+  function overview() {
+    var bets = data.bets;
+    if (!bets.length) return noBets();
+    var unit = data.settings.unit, s = B.stats(bets), start = data.settings.startBankroll;
+    var first = B.chrono(bets)[0].date;
+    return details(bets, 'Profit depuis le début', 'Depuis le ' + B.dateLabel(first) + ' · ' + B.plural(s.count, 'pari'), {
+      extraTiles: [['Bankroll', B.money(start + s.profit, unit), null, 'Départ : ' + B.money(start, unit)]]
+    });
+  }
+
+  function tournamentsView() {
+    var groups = B.byTournament(data.bets);
+    if (!groups.size) return noBets();
+    return [
+      el('p', { class: 'lead', text: 'Chaque tournoi avec son propre bilan. Touche un tournoi pour voir le détail de ses paris.' }),
+      B.groupList(groups, {
+        unit: data.settings.unit, range: true,
+        label: function (k) { return k; },
+        href: function (k) { return '#tournois/' + encodeURIComponent(k); }
+      })
+    ];
+  }
+
+  function tournamentView(name) {
+    var bets = data.bets.filter(function (b) { return B.tournamentOf(b) === name; });
+    var back = el('a', { class: 'back', href: '#tournois', text: '← Tous les tournois' });
+    if (!bets.length) return [back, el('p', { class: 'card empty', text: 'Ce tournoi est introuvable.' })];
+    var sorted = B.chrono(bets);
+    return [back, el('h1', { class: 'detail-title', text: name })].concat(details(bets, 'Profit sur ce tournoi',
+      B.rangeLabel(sorted[0].date, sorted[sorted.length - 1].date) + ' · ' + B.plural(bets.length, 'pari'),
+      { showTournament: false }));
+  }
+
+  function monthsView() {
+    var groups = B.byMonth(data.bets);
+    if (!groups.size) return noBets();
+    return [
+      el('p', { class: 'lead', text: 'Le bilan de chaque mois, indépendamment des autres. Touche un mois pour voir ses paris.' }),
+      B.groupList(groups, {
+        unit: data.settings.unit,
+        label: B.monthLabel,
+        href: function (k) { return '#mois/' + k; }
+      })
+    ];
+  }
+
+  function monthView(key) {
+    var bets = /^\d{4}-\d{2}$/.test(key) ? data.bets.filter(function (b) { return B.monthOf(b) === key; }) : [];
+    var back = el('a', { class: 'back', href: '#mois', text: '← Tous les mois' });
+    if (!bets.length) return [back, el('p', { class: 'card empty', text: 'Aucun pari ce mois-ci.' })];
+    return [back, el('h1', { class: 'detail-title', text: B.monthLabel(key) })].concat(details(bets, 'Profit du mois',
+      B.plural(bets.length, 'pari'), {}));
+  }
+})();
+</script>
+</body>
+</html>
