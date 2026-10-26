@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-26T14:01:30.762Z"
+    "updatedAt": "2026-10-26T14:01:57.975Z"
   },
   "bets": [
     {
@@ -150,7 +150,7 @@
     },
     {
       "id": "bmvpbrtl6ps2h",
-      "date": "2026-10-24",
+      "date": "2026-10-25",
       "tournament": "PGL Bucharest 2026",
       "match": "Spirit vs TYLOO",
       "pick": "Spirit map 1 gagnant",
