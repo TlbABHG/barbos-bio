@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-26T13:48:18.568Z"
+    "updatedAt": "2026-10-26T13:49:31.371Z"
   },
   "bets": [
     {
@@ -27,6 +27,16 @@
       "stake": 500,
       "result": "won",
       "odds": 1.56
+    },
+    {
+      "id": "bmvpbcei3ckrt",
+      "date": "2026-10-15",
+      "tournament": "Stake Pulse Beat lll",
+      "match": "MIBR vs BC.Game",
+      "pick": "MIBR gagne",
+      "odds": 1.58,
+      "result": "won",
+      "stake": 500
     }
   ]
 }
