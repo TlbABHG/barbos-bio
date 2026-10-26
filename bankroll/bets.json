@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-26T14:02:27.602Z"
+    "updatedAt": "2026-10-26T19:03:31.991Z"
   },
   "bets": [
     {
@@ -166,6 +166,16 @@
       "pick": "9z gagne",
       "odds": 1.25,
       "result": "lost",
+      "stake": 500
+    },
+    {
+      "id": "bmvpmk80nv239",
+      "date": "2026-10-26",
+      "tournament": "PGL Bucharest 2026",
+      "match": "Spirit vs FURIA",
+      "pick": "Spirit gagne",
+      "odds": 1.5,
+      "result": "won",
       "stake": 500
     }
   ]
