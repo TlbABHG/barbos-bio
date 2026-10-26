@@ -2,12 +2,12 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-26T13:53:57.566Z"
+    "updatedAt": "2026-10-26T13:54:29.149Z"
   },
   "bets": [
     {
       "id": "bmvpbaubswuyp",
-      "date": "2026-10-26",
+      "date": "2026-10-15",
       "tournament": "TWC",
       "type": "combo",
       "legs": [
