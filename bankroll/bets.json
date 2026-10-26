@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-26T14:00:33.441Z"
+    "updatedAt": "2026-10-26T14:01:30.762Z"
   },
   "bets": [
     {
@@ -146,6 +146,16 @@
       "pick": "Aurora gagne",
       "odds": 1.32,
       "result": "lost",
+      "stake": 500
+    },
+    {
+      "id": "bmvpbrtl6ps2h",
+      "date": "2026-10-24",
+      "tournament": "PGL Bucharest 2026",
+      "match": "Spirit vs TYLOO",
+      "pick": "Spirit map 1 gagnant",
+      "odds": 1.32,
+      "result": "won",
       "stake": 500
     }
   ]
