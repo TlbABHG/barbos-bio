@@ -2,18 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-26T13:47:39.169Z"
+    "updatedAt": "2026-10-26T13:47:43.726Z"
   },
-  "bets": [
-    {
-      "id": "bmvpb9zxdjry2",
-      "date": "2026-10-26",
-      "tournament": "aa",
-      "match": "aa",
-      "pick": "aa",
-      "odds": 1.4,
-      "result": "won",
-      "stake": 500
-    }
-  ]
+  "bets": []
 }
