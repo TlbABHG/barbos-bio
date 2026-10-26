@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-26T13:54:29.149Z"
+    "updatedAt": "2026-10-26T13:55:28.730Z"
   },
   "bets": [
     {
@@ -65,6 +65,16 @@
       "match": "Fnatic vs PARIVISION",
       "pick": "PARIVISION gagne",
       "odds": 1.42,
+      "result": "won",
+      "stake": 500
+    },
+    {
+      "id": "bmvpbk28qi0t6",
+      "date": "2026-10-24",
+      "tournament": "PGL Bucharest 2026",
+      "match": "G2 vs NAVI",
+      "pick": "NAVI gagne",
+      "odds": 1.68,
       "result": "won",
       "stake": 500
     }
