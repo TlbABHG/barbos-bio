@@ -72,6 +72,15 @@ button,input,select{font:inherit;color:inherit}
 .bet-pick{margin-top:2px;font-size:14px;overflow-wrap:anywhere}
 .bet-odds{font-weight:700;color:var(--gold)}
 .bet-meta{margin-top:2px;font-size:12.5px;color:var(--muted)}
+.legs{flex-basis:100%;list-style:none;margin:2px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.leg{display:flex;flex-wrap:wrap;align-items:flex-start;gap:4px 8px;padding:6px 10px;border-radius:9px;
+  background:rgba(230,232,234,.045);font-size:13.5px}
+.leg-icon{flex:none;width:14px;text-align:center;font-style:normal;font-weight:800}
+.leg-won .leg-icon{color:var(--good)} .leg-lost .leg-icon{color:var(--critical)}
+.leg-pending .leg-icon{color:var(--warning)} .leg-void .leg-icon{color:var(--muted)}
+.leg-text{flex:1;min-width:0;overflow-wrap:anywhere}
+.leg-text b{font-weight:700}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .bet-profit{flex:none;font-size:15px;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
 .bet-profit.muted{font-size:13px;font-weight:600}
 .more{min-height:44px;border-radius:12px;border:1px solid var(--line-strong);background:transparent;

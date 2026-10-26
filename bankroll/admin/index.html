@@ -52,6 +52,23 @@
   .toast.error{border-color:rgba(208,59,59,.8)}
   .linkbtn{background:none;border:none;padding:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
   .editing{outline:2px solid var(--gold);outline-offset:-1px}
+
+  .type-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:12px;background:var(--bg);border:1px solid var(--line-strong)}
+  .form .type-switch label{position:relative;display:block}
+  .form .type-switch input{position:absolute;inset:0;width:100%;height:100%;min-height:0;margin:0;padding:0;opacity:0;cursor:pointer}
+  .type-switch span{display:flex;align-items:center;justify-content:center;min-height:40px;border-radius:9px;font-size:14px;font-weight:700;color:var(--muted)}
+  .type-switch input:checked + span{background:var(--gold);color:var(--bg)}
+  .type-switch input:focus-visible + span{outline:2px solid var(--gold);outline-offset:2px}
+  .subgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .combo-fields{display:flex;flex-direction:column;gap:12px}
+  .legs-edit{display:flex;flex-direction:column;gap:10px}
+  .leg-edit{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px;border-radius:12px;background:var(--panel-2);border:1px solid var(--line)}
+  .leg-head{grid-column:1 / -1;display:flex;align-items:center;justify-content:space-between;font-size:14px}
+  .combo-foot{align-items:center;justify-content:space-between}
+  .combo-total{font-size:14px;color:var(--muted)}
+  .combo-total b{font-size:17px;color:var(--gold)}
+  .leg-actions{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 2px 22px}
+  .leg-actions .mini{min-height:32px;padding:0 10px;font-size:12.5px}
 </style>
 </head>
 <body>
@@ -88,20 +105,36 @@
     <section id="formCard" class="card">
       <h2 class="section" id="formTitle">Nouveau pari</h2>
       <form id="betForm" class="form" autocomplete="off">
+        <div class="wide type-switch" role="radiogroup" aria-label="Type de pari">
+          <label><input type="radio" name="type" value="single" checked><span>Pari simple</span></label>
+          <label><input type="radio" name="type" value="combo"><span>Pari combiné</span></label>
+        </div>
         <label>Date <input name="date" type="date" required></label>
-        <label>Tournoi <input name="tournament" list="tournamentList" required placeholder="IEM Chengdu 2026"></label>
-        <label class="wide">Match <input name="match" required placeholder="Vitality vs MOUZ"></label>
-        <label class="wide">Pari <input name="pick" required placeholder="Vitality gagne · +1,5 map · Over 2,5 maps…"></label>
-        <label>Cote <input name="odds" type="number" step="0.01" min="1.01" inputmode="decimal" required placeholder="1.85"></label>
         <label><span>Mise (<span class="unit-label">€</span>)</span> <input name="stake" type="number" step="0.01" min="0.01" inputmode="decimal" required placeholder="10"></label>
-        <label class="wide">Résultat
-          <select name="result">
-            <option value="pending">En attente</option>
-            <option value="won">Gagné</option>
-            <option value="lost">Perdu</option>
-            <option value="void">Remboursé</option>
-          </select>
-        </label>
+        <label class="wide">Tournoi <input name="tournament" list="tournamentList" required placeholder="IEM Chengdu 2026"></label>
+
+        <div id="singleFields" class="wide subgrid">
+          <label class="wide">Match <input name="match" required placeholder="Vitality vs MOUZ"></label>
+          <label class="wide">Pari <input name="pick" required placeholder="Vitality gagne · +1,5 map · Over 2,5 maps…"></label>
+          <label>Cote <input name="odds" type="number" step="0.01" min="1.01" inputmode="decimal" required placeholder="1.85"></label>
+          <label>Résultat
+            <select name="result">
+              <option value="pending">En attente</option>
+              <option value="won">Gagné</option>
+              <option value="lost">Perdu</option>
+              <option value="void">Remboursé</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="comboFields" class="wide combo-fields" hidden>
+          <p class="note">Ajoute chaque sélection avec sa cote. Quand un match est fini, mets le résultat de sa sélection : le résultat du combiné et la cote totale se calculent tout seuls. Si les sélections viennent de plusieurs tournois, écris par exemple « Multi-tournois » comme tournoi.</p>
+          <div id="legs" class="legs-edit"></div>
+          <div class="row combo-foot">
+            <button id="addLeg" class="mini" type="button">+ Ajouter une sélection</button>
+            <span class="combo-total">Cote totale : <b id="comboOdds">—</b></span>
+          </div>
+        </div>
         <div class="wide row">
           <button id="submitBtn" class="btn solid" type="submit">Ajouter le pari</button>
           <button id="cancelEdit" class="btn" type="button" hidden>Annuler</button>
@@ -282,7 +315,7 @@
     B.fill($('tournamentList'), names.map(function (n) { return el('option', { value: n }); }));
 
     $('pendingTitle').textContent = 'En attente de résultat (' + pending.length + ')';
-    B.fill($('pending'), [B.betList(pending, unit, { limit: 100, actions: actionsFor, emptyText: 'Aucun pari en attente.' })]);
+    B.fill($('pending'), [B.betList(pending, unit, { limit: 100, actions: actionsFor, legActions: legActionsFor, emptyText: 'Aucun pari en attente.' })]);
     renderHistory();
 
     if (!settingsForm.contains(document.activeElement)) {
@@ -294,23 +327,33 @@
     var d = state.data, q = $('search').value.trim().toLowerCase();
     var done = d.bets.filter(function (b) {
       if (b.result === 'pending') return false;
-      return !q || [b.match, b.tournament, b.pick, b.date].join(' ').toLowerCase().indexOf(q) >= 0;
+      var text = [b.match, b.tournament, b.pick, b.date].concat((b.legs || []).map(function (l) { return l.match + ' ' + l.pick; }));
+      return !q || text.join(' ').toLowerCase().indexOf(q) >= 0;
     });
     B.fill($('history'), [B.betList(done, d.settings.unit, {
-      limit: 30, actions: actionsFor, emptyText: q ? 'Aucun pari ne correspond.' : 'Aucun pari terminé pour l’instant.'
+      limit: 30, actions: actionsFor, legActions: legActionsFor,
+      emptyText: q ? 'Aucun pari ne correspond.' : 'Aucun pari terminé pour l’instant.'
     })]);
   }
 
+  function resultButtons(onPick) {
+    return [['won', '✓ Gagné'], ['lost', '✕ Perdu'], ['void', '↺ Remboursé']].map(function (r) {
+      return el('button', { type: 'button', class: 'mini mini-' + r[0], text: r[1], onclick: function () { onPick(r[0]); } });
+    });
+  }
+
+  // Le résultat d'un combiné se donne sélection par sélection (voir legActionsFor).
   function actionsFor(bet) {
-    var box = el('div', { class: 'bet-actions' });
-    if (bet.result === 'pending') {
-      [['won', '✓ Gagné'], ['lost', '✕ Perdu'], ['void', '↺ Remboursé']].forEach(function (r) {
-        box.appendChild(el('button', { type: 'button', class: 'mini mini-' + r[0], text: r[1], onclick: function () { setResult(bet.id, r[0]); } }));
-      });
-    }
-    box.appendChild(el('button', { type: 'button', class: 'mini', text: 'Modifier', onclick: function () { edit(bet.id); } }));
-    box.appendChild(el('button', { type: 'button', class: 'mini mini-danger', text: 'Supprimer', onclick: function () { remove(bet.id); } }));
-    return box;
+    var buttons = bet.result === 'pending' && !B.isCombo(bet) ? resultButtons(function (r) { setResult(bet.id, r); }) : [];
+    return el('div', { class: 'bet-actions' }, buttons.concat([
+      el('button', { type: 'button', class: 'mini', text: 'Modifier', onclick: function () { edit(bet.id); } }),
+      el('button', { type: 'button', class: 'mini mini-danger', text: 'Supprimer', onclick: function () { remove(bet.id); } })
+    ]));
+  }
+
+  function legActionsFor(bet, i) {
+    if (bet.legs[i].result !== 'pending') return null;
+    return el('div', { class: 'leg-actions' }, resultButtons(function (r) { setLegResult(bet.id, i, r); }));
   }
 
   /* ---------- Actions ---------- */
@@ -319,21 +362,33 @@
     var bet = find(state.data, id);
     if (!bet) return;
     commit(function (d) { find(d, id).result = result; },
-      'Bankroll : ' + bet.match + ' → ' + B.RESULTS[result].label.toLowerCase());
+      'Bankroll : ' + B.betTitle(bet) + ' → ' + B.RESULTS[result].label.toLowerCase());
+  }
+
+  function setLegResult(id, i, result) {
+    var bet = find(state.data, id);
+    if (!bet) return;
+    commit(function (d) { var b = find(d, id); b.legs[i].result = result; B.settleCombo(b); },
+      'Bankroll : combiné, ' + bet.legs[i].match + ' → ' + B.RESULTS[result].label.toLowerCase());
   }
 
   function remove(id) {
     var bet = find(state.data, id);
-    if (!bet || !confirm('Supprimer le pari « ' + bet.match + ' · ' + bet.pick + ' » ?')) return;
+    if (!bet || !confirm('Supprimer le pari « ' + B.betTitle(bet) + ' · ' + B.betPick(bet) + ' » ?')) return;
     if (state.editId === id) resetForm(false);
-    commit(function (d) { d.bets = d.bets.filter(function (b) { return b.id !== id; }); }, 'Bankroll : suppression ' + bet.match);
+    commit(function (d) { d.bets = d.bets.filter(function (b) { return b.id !== id; }); }, 'Bankroll : suppression ' + B.betTitle(bet));
   }
 
   function edit(id) {
     var bet = find(state.data, id);
     if (!bet) return;
     state.editId = id;
-    ['date', 'tournament', 'match', 'pick', 'odds', 'stake', 'result'].forEach(function (k) { form.elements[k].value = bet[k] == null ? '' : bet[k]; });
+    ['date', 'tournament', 'stake'].forEach(function (k) { form.elements[k].value = bet[k] == null ? '' : bet[k]; });
+    if (B.isCombo(bet)) setMode('combo', bet.legs);
+    else {
+      setMode('single', []);
+      ['match', 'pick', 'odds', 'result'].forEach(function (k) { form.elements[k].value = bet[k] == null ? '' : bet[k]; });
+    }
     $('formTitle').textContent = 'Modifier le pari';
     $('submitBtn').textContent = 'Enregistrer les modifications';
     $('cancelEdit').hidden = false;
@@ -343,10 +398,11 @@
 
   // keep : garde la date, le tournoi et la mise pour enchaîner les saisies.
   function resetForm(keep) {
-    var f = form.elements, kept = { date: f.date.value, tournament: f.tournament.value, stake: f.stake.value };
+    var f = form.elements, kept = { date: f.date.value, tournament: f.tournament.value, stake: f.stake.value, mode: currentMode() };
     form.reset();
     f.date.value = keep && kept.date ? kept.date : B.today();
     if (keep) { f.tournament.value = kept.tournament; f.stake.value = kept.stake; }
+    setMode(keep ? kept.mode : 'single', []);
     state.editId = null;
     $('formTitle').textContent = 'Nouveau pari';
     $('submitBtn').textContent = 'Ajouter le pari';
@@ -354,19 +410,98 @@
     $('formCard').classList.remove('editing');
   }
 
+  /* ---------- Combiné : saisie des sélections ---------- */
+
+  function currentMode() { return form.querySelector('input[name="type"]:checked').value; }
+
+  // legs : sélections à afficher (remplace les actuelles) ; sans legs, on garde celles déjà saisies.
+  function setMode(mode, legs) {
+    var combo = mode === 'combo';
+    form.querySelector('input[name="type"][value="' + mode + '"]').checked = true;
+    if (legs) { $('legs').replaceChildren(); legs.forEach(function (l) { addLeg(l); }); }
+    while (combo && $('legs').children.length < 2) addLeg();
+    $('singleFields').hidden = combo;
+    $('comboFields').hidden = !combo;
+    // Les champs masqués sont désactivés pour ne pas bloquer la validation du formulaire.
+    $('singleFields').querySelectorAll('input, select').forEach(function (n) { n.disabled = combo; });
+    $('comboFields').querySelectorAll('input, select').forEach(function (n) { n.disabled = !combo; });
+    updateComboOdds();
+  }
+
+  function addLeg(leg) {
+    leg = leg || {};
+    var select = el('select', { class: 'leg-result' }, Object.keys(B.RESULTS).map(function (k) {
+      return el('option', { value: k, text: B.RESULTS[k].label });
+    }));
+    select.value = B.RESULTS[leg.result] ? leg.result : 'pending';
+    var row = el('div', { class: 'leg-edit' }, [
+      el('div', { class: 'leg-head' }, [
+        el('b', { class: 'leg-title' }),
+        el('button', { type: 'button', class: 'linkbtn', text: 'Retirer', onclick: function () { row.remove(); renumberLegs(); updateComboOdds(); } })
+      ]),
+      el('label', { class: 'wide' }, ['Match', el('input', { class: 'leg-match', required: true, placeholder: 'NAVI vs G2' })]),
+      el('label', { class: 'wide' }, ['Pari', el('input', { class: 'leg-pick', required: true, placeholder: 'NAVI gagne' })]),
+      el('label', null, ['Cote', el('input', { class: 'leg-odds', type: 'number', step: '0.01', min: '1.01', inputmode: 'decimal', required: true, placeholder: '1.85' })]),
+      el('label', null, ['Résultat', select])
+    ]);
+    row.querySelector('.leg-match').value = leg.match || '';
+    row.querySelector('.leg-pick').value = leg.pick || '';
+    row.querySelector('.leg-odds').value = leg.odds == null ? '' : leg.odds;
+    $('legs').appendChild(row);
+    renumberLegs();
+  }
+
+  function renumberLegs() {
+    Array.from($('legs').children).forEach(function (row, i) { row.querySelector('.leg-title').textContent = 'Sélection ' + (i + 1); });
+  }
+
+  function readLegs() {
+    return Array.from($('legs').children).map(function (row) {
+      return {
+        match: row.querySelector('.leg-match').value.trim(),
+        pick: row.querySelector('.leg-pick').value.trim(),
+        odds: B.round2(parseFloat(row.querySelector('.leg-odds').value)),
+        result: row.querySelector('.leg-result').value
+      };
+    });
+  }
+
+  function updateComboOdds() {
+    var legs = readLegs(), ok = legs.length >= 2 && legs.every(function (l) { return l.odds > 1; });
+    $('comboOdds').textContent = ok ? B.odds(B.settleCombo({ legs: legs }).odds) : '—';
+  }
+
+  form.querySelectorAll('input[name="type"]').forEach(function (r) {
+    r.addEventListener('change', function () { setMode(r.value); });
+  });
+  $('legs').addEventListener('input', updateComboOdds);
+  $('legs').addEventListener('change', updateComboOdds);
+  $('addLeg').addEventListener('click', function () {
+    addLeg();
+    updateComboOdds();
+    $('legs').lastChild.querySelector('.leg-match').focus();
+  });
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var f = form.elements;
-    var bet = {
-      date: f.date.value,
-      tournament: f.tournament.value.trim(),
-      match: f.match.value.trim(),
-      pick: f.pick.value.trim(),
-      odds: B.round2(parseFloat(f.odds.value)),
-      stake: B.round2(parseFloat(f.stake.value)),
-      result: f.result.value
-    };
-    if (!(bet.odds > 1) || !(bet.stake > 0)) { toast('error', 'La cote doit être supérieure à 1 et la mise positive.'); return; }
+    var bet = { date: f.date.value, tournament: f.tournament.value.trim() };
+    if (currentMode() === 'combo') {
+      var legs = readLegs();
+      if (legs.length < 2) { toast('error', 'Un combiné doit avoir au moins 2 sélections.'); return; }
+      if (!legs.every(function (l) { return l.odds > 1; })) { toast('error', 'Chaque cote doit être supérieure à 1.'); return; }
+      bet.type = 'combo';
+      bet.legs = legs;
+    } else {
+      bet.match = f.match.value.trim();
+      bet.pick = f.pick.value.trim();
+      bet.odds = B.round2(parseFloat(f.odds.value));
+      bet.result = f.result.value;
+      if (!(bet.odds > 1)) { toast('error', 'La cote doit être supérieure à 1.'); return; }
+    }
+    bet.stake = B.round2(parseFloat(f.stake.value));
+    if (!(bet.stake > 0)) { toast('error', 'La mise doit être positive.'); return; }
+    if (bet.type === 'combo') B.settleCombo(bet);
     var editId = state.editId, btn = $('submitBtn');
     btn.disabled = true;
     commit(function (d) {
@@ -376,9 +511,11 @@
       } else {
         d.bets.push(Object.assign({ id: newId() }, bet));
       }
-    }, (editId ? 'Bankroll : modification ' : 'Bankroll : ajout ') + bet.match).then(function (ok) {
+    }, (editId ? 'Bankroll : modification ' : 'Bankroll : ajout ') + B.betTitle(bet)).then(function (ok) {
       btn.disabled = false;
-      if (ok) { resetForm(true); f.match.focus(); }
+      if (!ok) return;
+      resetForm(true);
+      (currentMode() === 'combo' ? $('legs').querySelector('.leg-match') : f.match).focus();
     });
   });
 

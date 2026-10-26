@@ -33,8 +33,31 @@
       },
       bets: (Array.isArray(data.bets) ? data.bets : []).filter(function (b) {
         return b && /^\d{4}-\d{2}-\d{2}$/.test(b.date);
+      }).map(function (b) {
+        if (!isCombo(b)) return b;
+        return settleCombo(Object.assign({}, b, {
+          legs: b.legs.map(function (l) { return Object.assign({}, l, { result: RESULTS[l.result] ? l.result : 'pending' }); })
+        }));
       })
     };
+  }
+
+  /* Combiné : une sélection perdue fait perdre le combiné ; une sélection remboursée
+     sort du calcul de la cote, comme chez les bookmakers. */
+  function isCombo(bet) { return bet.type === 'combo' && Array.isArray(bet.legs); }
+
+  function settleCombo(bet) {
+    var legs = bet.legs, live = legs.filter(function (l) { return l.result !== 'void'; });
+    if (legs.some(function (l) { return l.result === 'lost'; })) bet.result = 'lost';
+    else if (legs.some(function (l) { return l.result !== 'won' && l.result !== 'void'; })) bet.result = 'pending';
+    else bet.result = live.length ? 'won' : 'void';
+    bet.odds = round2((live.length ? live : legs).reduce(function (p, l) { return p * num(l.odds); }, 1));
+    return bet;
+  }
+
+  function betTitle(bet) { return isCombo(bet) ? 'Combiné · ' + plural(bet.legs.length, 'sélection') : bet.match || '—'; }
+  function betPick(bet) {
+    return isCombo(bet) ? bet.legs.map(function (l) { return l.pick; }).join(' + ') : bet.pick || '';
   }
 
   function profit(bet) {
@@ -178,18 +201,36 @@
     var meta = [dateLabel(bet.date)];
     if (opts.showTournament !== false) meta.push(tournamentOf(bet));
     meta.push('mise' + NBSP + money(num(bet.stake), unit));
-    return el('li', { class: 'bet' }, [
+    var combo = isCombo(bet);
+    return el('li', { class: 'bet' + (combo ? ' bet-combo' : '') }, [
       el('div', { class: 'bet-main' }, [
-        el('div', { class: 'bet-top' }, [el('span', { class: 'bet-match', text: bet.match || '—' }), pill(bet.result)]),
-        el('div', { class: 'bet-pick' }, [bet.pick || '', el('span', { class: 'bet-odds', text: ' @ ' + odds(bet.odds) })]),
+        el('div', { class: 'bet-top' }, [el('span', { class: 'bet-match', text: betTitle(bet) }), pill(bet.result)]),
+        el('div', { class: 'bet-pick' }, [combo ? 'Cote totale' : bet.pick || '', el('span', { class: 'bet-odds', text: NBSP + '@' + NBSP + odds(bet.odds) })]),
         el('div', { class: 'bet-meta', text: meta.join(' · ') })
       ]),
       el('div', {
         class: 'bet-profit ' + (bet.result === 'pending' ? 'muted' : tone(p)),
         text: bet.result === 'pending' ? 'en cours' : signed(p, unit)
       }),
+      combo ? legList(bet, opts) : null,
       opts.actions ? opts.actions(bet) : null
     ]);
+  }
+
+  // opts.legActions(bet, index) : boutons ajoutés à une sélection (admin).
+  function legList(bet, opts) {
+    return el('ol', { class: 'legs' }, bet.legs.map(function (l, i) {
+      var r = RESULTS[l.result] || RESULTS.pending;
+      return el('li', { class: 'leg leg-' + (RESULTS[l.result] ? l.result : 'pending') }, [
+        el('i', { class: 'leg-icon', 'aria-hidden': 'true', text: r.icon }),
+        el('span', { class: 'sr', text: r.label + ' : ' }),
+        el('span', { class: 'leg-text' }, [
+          el('b', { text: l.match || '—' }), ' — ' + (l.pick || ''),
+          el('span', { class: 'bet-odds', text: NBSP + '@' + NBSP + odds(l.odds) })
+        ]),
+        opts.legActions ? opts.legActions(bet, i) : null
+      ]);
+    }));
   }
 
   // Liste du plus récent au plus ancien, affichée par pages.
@@ -314,8 +355,8 @@
         fill(tip, [
           el('strong', { class: tone(p.cum), text: signed(p.cum, unit) }),
           el('span', { class: 't-label', text: p.bet ? 'Profit cumulé · pari n°' + i : 'Départ' }),
-          p.bet ? el('span', { text: dateLabel(p.bet.date) + ' · ' + (p.bet.match || '') }) : null,
-          p.bet ? el('span', { class: 't-label', text: (p.bet.pick || '') + ' @ ' + odds(p.bet.odds) }) : null,
+          p.bet ? el('span', { text: dateLabel(p.bet.date) + ' · ' + betTitle(p.bet) }) : null,
+          p.bet ? el('span', { class: 't-label', text: betPick(p.bet) + ' @ ' + odds(p.bet.odds) }) : null,
           p.bet ? el('span', { class: 't-res' }, [pill(p.bet.result), el('b', { class: tone(profit(p.bet)), text: signed(profit(p.bet), unit) })]) : null
         ]);
         tip.classList.add('on');
@@ -357,6 +398,7 @@
   window.Bankroll = {
     RESULTS: RESULTS,
     normalize: normalize, profit: profit, stats: stats, chrono: chrono, round2: round2,
+    isCombo: isCombo, settleCombo: settleCombo, betTitle: betTitle, betPick: betPick,
     tournamentOf: tournamentOf, monthOf: monthOf,
     byTournament: function (bets) { return groupBy(bets, tournamentOf); },
     byMonth: function (bets) { return groupBy(bets, monthOf); },
