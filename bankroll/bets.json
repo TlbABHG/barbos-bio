@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-26T19:03:43.862Z"
+    "updatedAt": "2026-10-27T19:13:25.391Z"
   },
   "bets": [
     {
@@ -146,6 +146,16 @@
       "pick": "Spirit gagne",
       "odds": 1.5,
       "result": "won",
+      "stake": 500
+    },
+    {
+      "id": "bmvr2csjzoy38",
+      "date": "2026-10-27",
+      "tournament": "PGL Bucharest 2026",
+      "match": "Vitality vs NAVI",
+      "pick": "Vitality gagne",
+      "odds": 1.32,
+      "result": "pending",
       "stake": 500
     }
   ]
