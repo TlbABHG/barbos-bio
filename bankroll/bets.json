@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-27T19:14:43.524Z"
+    "updatedAt": "2026-10-27T19:16:12.149Z"
   },
   "bets": [
     {
@@ -165,6 +165,16 @@
       "match": "Aurora vs Liquid",
       "pick": "Aurora gagne",
       "odds": 1.32,
+      "result": "won",
+      "stake": 500
+    },
+    {
+      "id": "bmvr2gd85bxyg",
+      "date": "2026-10-27",
+      "tournament": "PGL Bucharest 2026",
+      "match": "FURIA vs TYLOO",
+      "pick": "FURIA 1er map gagnant",
+      "odds": 1.22,
       "result": "won",
       "stake": 500
     }
