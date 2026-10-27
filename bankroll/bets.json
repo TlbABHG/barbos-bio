@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-27T19:16:12.149Z"
+    "updatedAt": "2026-10-27T19:58:02.012Z"
   },
   "bets": [
     {
@@ -155,7 +155,7 @@
       "match": "Vitality vs NAVI",
       "pick": "Vitality gagne",
       "odds": 1.32,
-      "result": "pending",
+      "result": "won",
       "stake": 500
     },
     {
