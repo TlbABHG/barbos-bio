@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-10-27T19:13:25.391Z"
+    "updatedAt": "2026-10-27T19:14:43.524Z"
   },
   "bets": [
     {
@@ -156,6 +156,16 @@
       "pick": "Vitality gagne",
       "odds": 1.32,
       "result": "pending",
+      "stake": 500
+    },
+    {
+      "id": "bmvr2eguc23m4",
+      "date": "2026-10-27",
+      "tournament": "PGL Bucharest 2026",
+      "match": "Aurora vs Liquid",
+      "pick": "Aurora gagne",
+      "odds": 1.32,
+      "result": "won",
       "stake": 500
     }
   ]
