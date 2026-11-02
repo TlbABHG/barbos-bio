@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-02T12:02:45.738Z"
+    "updatedAt": "2026-11-02T12:03:00.630Z"
   },
   "bets": [
     {
@@ -225,7 +225,7 @@
       "match": "MOUZ vs TYLOO",
       "pick": "moins de 2,5 map",
       "odds": 1.38,
-      "result": "pending",
+      "result": "won",
       "stake": 500
     }
   ]
