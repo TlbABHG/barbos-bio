@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-01T16:45:32.743Z"
+    "updatedAt": "2026-11-02T11:47:40.173Z"
   },
   "bets": [
     {
@@ -205,7 +205,7 @@
       "match": "FURIA vs Faze",
       "pick": "FURIA Vainqueur",
       "odds": 1.38,
-      "result": "pending",
+      "result": "won",
       "stake": 500
     }
   ]
