@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-02T23:17:18.354Z"
+    "updatedAt": "2026-11-03T07:06:43.068Z"
   },
   "bets": [
     {
@@ -236,6 +236,16 @@
       "pick": "MOUZ Vainqueur",
       "odds": 1.35,
       "result": "pending",
+      "stake": 500
+    },
+    {
+      "id": "bmw0ch7gbhifp",
+      "date": "2026-11-03",
+      "tournament": "IEM Beijing 2026",
+      "match": "Aurora vs G2",
+      "pick": "Aurora Vainqueur",
+      "odds": 1.62,
+      "result": "won",
       "stake": 500
     }
   ]
