@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-03T07:52:50.111Z"
+    "updatedAt": "2026-11-03T14:16:36.023Z"
   },
   "bets": [
     {
@@ -245,6 +245,16 @@
       "match": "Aurora vs G2",
       "pick": "Aurora Vainqueur",
       "odds": 1.62,
+      "result": "won",
+      "stake": 500
+    },
+    {
+      "id": "bmw0ru1fbcwk2",
+      "date": "2026-11-03",
+      "tournament": "IEM Beijing 2026",
+      "match": "Mongolz vs Heroic",
+      "pick": "Mongolz Vainqueur",
+      "odds": 1.85,
       "result": "won",
       "stake": 500
     }
