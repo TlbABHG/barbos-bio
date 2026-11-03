@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-03T07:06:43.068Z"
+    "updatedAt": "2026-11-03T07:52:50.111Z"
   },
   "bets": [
     {
@@ -235,7 +235,7 @@
       "match": "MOUZ vs BetBoom",
       "pick": "MOUZ Vainqueur",
       "odds": 1.35,
-      "result": "pending",
+      "result": "won",
       "stake": 500
     },
     {
