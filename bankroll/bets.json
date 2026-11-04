@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-04T08:24:56.979Z"
+    "updatedAt": "2026-11-04T08:45:32.103Z"
   },
   "bets": [
     {
@@ -284,11 +284,11 @@
           "match": "MOUZ vs PARIVISION",
           "pick": "MOUZ Vainqueur",
           "odds": 1.22,
-          "result": "pending"
+          "result": "won"
         }
       ],
       "stake": 500,
-      "result": "pending",
+      "result": "won",
       "odds": 1.4
     }
   ]
