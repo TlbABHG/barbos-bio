@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-08T11:04:02.242Z"
+    "updatedAt": "2026-11-08T16:05:37.245Z"
   },
   "bets": [
     {
@@ -338,6 +338,16 @@
       "match": "MongolZ vs MOUZ",
       "pick": "- 82,5 rounds",
       "odds": 1.92,
+      "result": "won",
+      "stake": 500
+    },
+    {
+      "id": "bmw80xhzxq4z4",
+      "date": "2026-11-08",
+      "tournament": "ESL Challenger League",
+      "match": "G2 Ares vs PRIVATE",
+      "pick": "- 2.5 map",
+      "odds": 1.55,
       "result": "won",
       "stake": 500
     }
