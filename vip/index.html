@@ -6,7 +6,7 @@
 <title>Accès VIP · Barbos Analytic</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="icon" href="../images/logo.webp">
+<link rel="icon" href="../images/pp.webp">
 <meta name="theme-color" content="#06070A">
 <style>
   :root{
@@ -29,16 +29,19 @@
       repeating-linear-gradient(135deg,rgba(242,243,245,.022) 0 1px,transparent 1px 28px)}
   .wrap{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:40px 20px 56px}
 
-  header{display:flex;align-items:center;gap:12px}
+  header a{display:inline-flex;align-items:center;gap:12px}
   header img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:1.5px solid rgba(91,139,255,.6);box-shadow:0 0 18px rgba(40,97,255,.35)}
   header b{font-family:var(--serif);font-size:19px;font-weight:900;letter-spacing:-.3px}
+  header b span{color:var(--blue-hi)}
 
   .hero{max-width:640px;margin:56px 0 44px}
   h1{margin:0 0 16px;font-family:var(--serif);font-size:clamp(34px,6vw,56px);line-height:1.08;font-weight:900;letter-spacing:-1.2px}
   .hero p{margin:0;font-size:17px;color:var(--muted);max-width:52ch}
 
   .plans{display:grid;gap:18px;grid-template-columns:1fr 1.12fr 1fr;align-items:stretch}
-  .plan{display:flex;flex-direction:column;gap:18px;padding:28px 24px;border-radius:18px;background:var(--panel);border:1px solid var(--line)}
+  .plan{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:18px;padding:28px 24px;border-radius:18px;
+    background:linear-gradient(180deg,#11151D 0%,#0B0E14 100%);border:1px solid var(--line);box-shadow:0 24px 60px rgba(0,0,0,.45)}
+  .plan::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--split)}
   .plan h2{margin:0;font-size:18px;font-weight:700}
   .price{font-family:var(--serif);font-size:46px;font-weight:900;line-height:1;letter-spacing:-1.5px}
   .price small{font-family:var(--sans);font-size:15px;font-weight:600;color:var(--muted);margin-left:4px}
@@ -46,7 +49,8 @@
   ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;flex:1}
   li{display:flex;gap:10px;font-size:14.5px}
   li::before{content:"";flex:none;width:16px;height:16px;margin-top:3px;border-radius:50%;
-    background:var(--gold-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B8BFF' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/10px no-repeat}
+    border:1px solid rgba(91,139,255,.35);
+    background:var(--blue-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B8BFF' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/10px no-repeat}
 
   .btn{display:flex;align-items:center;justify-content:center;min-height:50px;padding:0 16px;border-radius:12px;font-weight:700;font-size:15px;text-align:center;
     border:1.5px solid rgba(91,139,255,.7);background:rgba(40,97,255,.06);color:var(--white);transition:transform .15s ease,box-shadow .15s ease}
@@ -82,8 +86,10 @@
 <div class="wrap">
 
   <header>
-    <img src="../images/logo.webp" alt="Barbos Analytic">
-    <b>Barbos Analytic</b>
+    <a href="../">
+      <img src="../images/pp.webp" alt="">
+      <b>Barbos <span>Analytic</span></b>
+    </a>
   </header>
 
   <section class="hero">
