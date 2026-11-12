@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-12T15:23:19.448Z"
+    "updatedAt": "2026-11-12T15:23:21.456Z"
   },
   "bets": [
     {
@@ -370,16 +370,6 @@
       "odds": 2,
       "result": "lost",
       "stake": 750
-    },
-    {
-      "id": "bmwc1nv0g6eds",
-      "date": "2026-11-11",
-      "tournament": "BLAST Rivals Fall 2026",
-      "match": "Vitality vs FURIA",
-      "pick": "Vitality Vainqueur",
-      "odds": 1.42,
-      "result": "pending",
-      "stake": 1000
     }
   ]
 }
