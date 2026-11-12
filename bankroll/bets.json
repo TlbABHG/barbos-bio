@@ -2,32 +2,9 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-12T15:24:48.890Z"
+    "updatedAt": "2026-11-12T15:24:50.190Z"
   },
   "bets": [
-    {
-      "id": "bmvpbaubswuyp",
-      "date": "2026-10-15",
-      "tournament": "TWC",
-      "type": "combo",
-      "legs": [
-        {
-          "match": "9z vs Falcons",
-          "pick": "Falcons gagne",
-          "odds": 1.22,
-          "result": "won"
-        },
-        {
-          "match": "Aurora vs NIP",
-          "pick": "Aurora gagne",
-          "odds": 1.28,
-          "result": "won"
-        }
-      ],
-      "stake": 500,
-      "result": "won",
-      "odds": 1.56
-    },
     {
       "id": "bmvpbosvi1iyo",
       "date": "2026-10-18",
