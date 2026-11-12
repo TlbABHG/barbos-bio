@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-12T15:23:21.456Z"
+    "updatedAt": "2026-11-12T15:23:23.161Z"
   },
   "bets": [
     {
@@ -358,16 +358,6 @@
       "match": "Legacy vs FURIA",
       "pick": "+ 50.5 rounds",
       "odds": 1.75,
-      "result": "lost",
-      "stake": 750
-    },
-    {
-      "id": "bmwc1n4ak120y",
-      "date": "2026-11-11",
-      "tournament": "BLAST Rivals Fall 2026",
-      "match": "Vitality vs Falcons",
-      "pick": "+ 54.5 rounds",
-      "odds": 2,
       "result": "lost",
       "stake": 750
     }
