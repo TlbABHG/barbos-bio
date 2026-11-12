@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-12T15:24:39.330Z"
+    "updatedAt": "2026-11-12T15:24:40.574Z"
   },
   "bets": [
     {
@@ -45,16 +45,6 @@
       "match": "Aurora vs 9z",
       "pick": "Aurora Vainqueur",
       "odds": 1.4,
-      "result": "won",
-      "stake": 500
-    },
-    {
-      "id": "bmvpberoky4am",
-      "date": "2026-10-19",
-      "tournament": "Private Club Season 2",
-      "match": "Liquid vs Fnatic",
-      "pick": "Vainqueur Liquid",
-      "odds": 1.58,
       "result": "won",
       "stake": 500
     },
