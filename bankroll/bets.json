@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-12T15:23:54.677Z"
+    "updatedAt": "2026-11-12T15:23:56.078Z"
   },
   "bets": [
     {
@@ -205,16 +205,6 @@
       "match": "FURIA vs Faze",
       "pick": "FURIA Vainqueur",
       "odds": 1.38,
-      "result": "won",
-      "stake": 500
-    },
-    {
-      "id": "bmvz7icoaqwih",
-      "date": "2026-11-02",
-      "tournament": "IEM Beijing 2026",
-      "match": "9z vs BetBoom",
-      "pick": "BetBoom Vainqueur",
-      "odds": 1.4,
       "result": "won",
       "stake": 500
     },
