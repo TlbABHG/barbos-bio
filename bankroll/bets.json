@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-12T15:23:46.213Z"
+    "updatedAt": "2026-11-12T15:23:52.087Z"
   },
   "bets": [
     {
@@ -235,16 +235,6 @@
       "match": "MOUZ vs BetBoom",
       "pick": "MOUZ Vainqueur",
       "odds": 1.35,
-      "result": "won",
-      "stake": 500
-    },
-    {
-      "id": "bmw0ru1fbcwk2",
-      "date": "2026-11-03",
-      "tournament": "IEM Beijing 2026",
-      "match": "Mongolz vs Heroic",
-      "pick": "Mongolz Vainqueur",
-      "odds": 1.85,
       "result": "won",
       "stake": 500
     }
