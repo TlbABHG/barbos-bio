@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-12T15:23:41.924Z"
+    "updatedAt": "2026-11-12T15:23:43.223Z"
   },
   "bets": [
     {
@@ -255,16 +255,6 @@
       "match": "Mongolz vs Heroic",
       "pick": "Mongolz Vainqueur",
       "odds": 1.85,
-      "result": "won",
-      "stake": 500
-    },
-    {
-      "id": "bmw1sheqw42eg",
-      "date": "2026-11-04",
-      "tournament": "IEM Beijing 2026",
-      "match": "Falcons vs Heroic",
-      "pick": "Falcons Vainqueur",
-      "odds": 1.3,
       "result": "won",
       "stake": 500
     }
