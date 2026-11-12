@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-12T15:23:31.929Z"
+    "updatedAt": "2026-11-12T15:23:34.437Z"
   },
   "bets": [
     {
@@ -319,16 +319,6 @@
       "pick": "MOUZ Vainqueur",
       "odds": 1.3,
       "result": "won",
-      "stake": 500
-    },
-    {
-      "id": "bmw7q4uslruhx",
-      "date": "2026-11-08",
-      "tournament": "IEM Beijing 2026",
-      "match": "NAVI vs BetBoom",
-      "pick": "+ 2,5 map",
-      "odds": 1.85,
-      "result": "lost",
       "stake": 500
     }
   ]
