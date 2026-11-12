@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-12T15:24:10.396Z"
+    "updatedAt": "2026-11-12T15:24:12.330Z"
   },
   "bets": [
     {
@@ -175,16 +175,6 @@
       "match": "FURIA vs TYLOO",
       "pick": "FURIA 1er map gagnant",
       "odds": 1.22,
-      "result": "won",
-      "stake": 500
-    },
-    {
-      "id": "bmvsw1mhjgu2t",
-      "date": "2026-10-29",
-      "tournament": "PGL Bucharest 2026",
-      "match": "Vitality vs NAVI",
-      "pick": "Vitality Vainqueur",
-      "odds": 1.3,
       "result": "won",
       "stake": 500
     }
