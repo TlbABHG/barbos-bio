@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-12T15:24:23.743Z"
+    "updatedAt": "2026-11-12T15:24:25.478Z"
   },
   "bets": [
     {
@@ -126,16 +126,6 @@
       "pick": "Spirit map 1 gagnant",
       "odds": 1.32,
       "result": "won",
-      "stake": 500
-    },
-    {
-      "id": "bmvpbt1g2dtr9",
-      "date": "2026-10-26",
-      "tournament": "PGL Bucharest 2026",
-      "match": "9z vs TYLOO",
-      "pick": "9z gagne",
-      "odds": 1.25,
-      "result": "lost",
       "stake": 500
     }
   ]
