@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 10000,
     "unit": "€",
-    "updatedAt": "2026-11-12T15:23:52.087Z"
+    "updatedAt": "2026-11-12T15:23:53.421Z"
   },
   "bets": [
     {
@@ -225,16 +225,6 @@
       "match": "MOUZ vs TYLOO",
       "pick": "moins de 2,5 map",
       "odds": 1.38,
-      "result": "won",
-      "stake": 500
-    },
-    {
-      "id": "bmvzvpjf6h83f",
-      "date": "2026-11-03",
-      "tournament": "IEM Beijing 2026",
-      "match": "MOUZ vs BetBoom",
-      "pick": "MOUZ Vainqueur",
-      "odds": 1.35,
       "result": "won",
       "stake": 500
     }
