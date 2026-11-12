@@ -184,8 +184,7 @@
       ['ROI', percent(s.roi, true), tone(s.roi)],
       ['Réussite', percent(s.hitRate)],
       ['Gagnés · Perdus', s.won + ' · ' + s.lost, null, s.void ? plural(s.void, 'remboursé') : null],
-      ['Cote moyenne', s.avgOdds == null ? '—' : odds(s.avgOdds)],
-      ['Total misé', money(s.staked, unit)]
+      ['Cote moyenne', s.avgOdds == null ? '—' : odds(s.avgOdds)]
     ]);
     return el('div', { class: 'stats' }, tiles.map(function (t) {
       return el('div', { class: 'stat' }, [

@@ -103,10 +103,9 @@
   // Bloc commun aux vues détaillées : stats, paris en cours, courbe, historique.
   function details(bets, heroLabel, sub, opts) {
     var unit = data.settings.unit, s = B.stats(bets), pending = pendingOf(bets);
-    var tiles = opts.extraTiles || [['Paris', String(s.count), null, pending.length ? pending.length + ' en cours' : null]];
     return [
       B.hero(heroLabel, s, unit, sub),
-      B.statTiles(s, unit, tiles),
+      B.statTiles(s, unit),
       pending.length ? section('En cours (' + pending.length + ')', B.betList(pending, unit, opts)) : null,
       section('Évolution du profit', el('div', { class: 'card' }, [B.profitChart(bets, unit)])),
       section('Historique', B.betList(settledOf(bets), unit, Object.assign({ emptyText: 'Aucun pari terminé pour l’instant.' }, opts)))
@@ -116,11 +115,8 @@
   function overview() {
     var bets = data.bets;
     if (!bets.length) return noBets();
-    var unit = data.settings.unit, s = B.stats(bets), start = data.settings.startBankroll;
-    var first = B.chrono(bets)[0].date;
-    return details(bets, 'Profit depuis le début', 'Depuis le ' + B.dateLabel(first) + ' · ' + B.plural(s.count, 'pari'), {
-      extraTiles: [['Bankroll', B.money(start + s.profit, unit), null, 'Départ : ' + B.money(start, unit)]]
-    });
+    var s = B.stats(bets), first = B.chrono(bets)[0].date;
+    return details(bets, 'Profit depuis le début', 'Depuis le ' + B.dateLabel(first) + ' · ' + B.plural(s.count, 'pari'), {});
   }
 
   function tournamentsView() {

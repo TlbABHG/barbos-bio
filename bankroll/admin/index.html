@@ -309,7 +309,8 @@
     B.fill($('summary'), [B.statTiles(s, unit, [
       ['Profit', B.signed(s.profit, unit), B.tone(s.profit)],
       ['Bankroll', B.money(d.settings.startBankroll + s.profit, unit)],
-      ['Paris', String(d.bets.length), null, pending.length ? pending.length + ' en attente' : null]
+      ['Paris', String(d.bets.length), null, pending.length ? pending.length + ' en attente' : null],
+      ['Total misé', B.money(s.staked, unit)]
     ])]);
 
     document.querySelectorAll('.unit-label').forEach(function (n) { n.textContent = unit; });
