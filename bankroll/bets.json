@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 20000,
     "unit": "€",
-    "updatedAt": "2026-11-13T15:39:00.974Z"
+    "updatedAt": "2026-11-13T15:39:32.969Z"
   },
   "bets": [
     {
@@ -13,6 +13,16 @@
       "pick": "Vainqueur Spirit",
       "odds": 1.26,
       "result": "won",
+      "stake": 1000
+    },
+    {
+      "id": "bmwf578btf34g",
+      "date": "2026-11-12",
+      "tournament": "BLAST Rivals Fall 2026",
+      "match": "G2 vs Falcons",
+      "pick": "Vainqueur Falcons",
+      "odds": 1.35,
+      "result": "pending",
       "stake": 1000
     }
   ]
