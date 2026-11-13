@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 20000,
     "unit": "€",
-    "updatedAt": "2026-11-13T15:39:32.969Z"
+    "updatedAt": "2026-11-13T15:39:47.814Z"
   },
   "bets": [
     {
@@ -22,6 +22,16 @@
       "match": "G2 vs Falcons",
       "pick": "Vainqueur Falcons",
       "odds": 1.35,
+      "result": "pending",
+      "stake": 1000
+    },
+    {
+      "id": "bmwf57js6qujx",
+      "date": "2026-11-12",
+      "tournament": "BLAST Rivals Fall 2026",
+      "match": "Spirit vs MOUZ",
+      "pick": "+ 2,5 map",
+      "odds": 1.85,
       "result": "pending",
       "stake": 1000
     }
