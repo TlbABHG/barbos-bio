@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 20000,
     "unit": "€",
-    "updatedAt": "2026-11-13T15:40:05.573Z"
+    "updatedAt": "2026-11-13T15:40:33.822Z"
   },
   "bets": [
     {
@@ -29,7 +29,7 @@
       "id": "bmwf57js6qujx",
       "date": "2026-11-12",
       "tournament": "BLAST Rivals Fall 2026",
-      "match": "Spirit vs MOUZ",
+      "match": "FURIA vs Falcons",
       "pick": "+ 2,5 map",
       "odds": 1.85,
       "result": "pending",
