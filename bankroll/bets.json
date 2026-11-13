@@ -2,7 +2,18 @@
   "settings": {
     "startBankroll": 20000,
     "unit": "€",
-    "updatedAt": "2026-11-12T15:25:08.172Z"
+    "updatedAt": "2026-11-13T15:39:00.974Z"
   },
-  "bets": []
+  "bets": [
+    {
+      "id": "bmwf56jn2ox1u",
+      "date": "2026-11-12",
+      "tournament": "BLAST Rivals Fall 2026",
+      "match": "Spirit vs G2",
+      "pick": "Vainqueur Spirit",
+      "odds": 1.26,
+      "result": "won",
+      "stake": 1000
+    }
+  ]
 }
