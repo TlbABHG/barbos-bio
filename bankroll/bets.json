@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 20000,
     "unit": "€",
-    "updatedAt": "2026-11-13T15:39:47.814Z"
+    "updatedAt": "2026-11-13T15:40:05.573Z"
   },
   "bets": [
     {
@@ -22,7 +22,7 @@
       "match": "G2 vs Falcons",
       "pick": "Vainqueur Falcons",
       "odds": 1.35,
-      "result": "pending",
+      "result": "won",
       "stake": 1000
     },
     {
