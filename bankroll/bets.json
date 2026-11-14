@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 20000,
     "unit": "€",
-    "updatedAt": "2026-11-13T15:40:56.194Z"
+    "updatedAt": "2026-11-14T16:03:42.892Z"
   },
   "bets": [
     {
@@ -23,16 +23,6 @@
       "pick": "Vainqueur Falcons",
       "odds": 1.35,
       "result": "won",
-      "stake": 1000
-    },
-    {
-      "id": "bmwf57js6qujx",
-      "date": "2026-11-12",
-      "tournament": "BLAST Rivals Fall 2026",
-      "match": "FURIA vs Falcons",
-      "pick": "+ 2,5 map",
-      "odds": 1.85,
-      "result": "pending",
       "stake": 1000
     },
     {
