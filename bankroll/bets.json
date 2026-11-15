@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 20000,
     "unit": "€",
-    "updatedAt": "2026-11-14T16:03:44.411Z"
+    "updatedAt": "2026-11-15T13:42:31.130Z"
   },
   "bets": [
     {
@@ -22,6 +22,16 @@
       "match": "G2 vs Falcons",
       "pick": "Vainqueur Falcons",
       "odds": 1.35,
+      "result": "won",
+      "stake": 1000
+    },
+    {
+      "id": "bmwhvwfkpt3ti",
+      "date": "2026-11-15",
+      "tournament": "BLAST Rivals Fall 2026",
+      "match": "Spirit vs FURIA",
+      "pick": "FURIA Vainqueur",
+      "odds": 2.15,
       "result": "won",
       "stake": 1000
     }
