@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 20000,
     "unit": "€",
-    "updatedAt": "2026-11-15T13:42:31.130Z"
+    "updatedAt": "2026-11-17T17:02:16.889Z"
   },
   "bets": [
     {
@@ -32,6 +32,16 @@
       "match": "Spirit vs FURIA",
       "pick": "FURIA Vainqueur",
       "odds": 2.15,
+      "result": "won",
+      "stake": 1000
+    },
+    {
+      "id": "bmwkxx16hj14a",
+      "date": "2026-11-17",
+      "tournament": "Stake Ranked Episode 6",
+      "match": "NIP vs UNiTY",
+      "pick": "- 2,5 map",
+      "odds": 1.5,
       "result": "won",
       "stake": 1000
     }
