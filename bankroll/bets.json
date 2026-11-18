@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 20000,
     "unit": "€",
-    "updatedAt": "2026-11-18T10:29:57.689Z"
+    "updatedAt": "2026-11-18T18:45:25.769Z"
   },
   "bets": [
     {
@@ -53,6 +53,16 @@
       "pick": "Vainqueur NIP",
       "odds": 1.45,
       "result": "pending",
+      "stake": 1000
+    },
+    {
+      "id": "bmwmh1j7tji4u",
+      "date": "2026-11-18",
+      "tournament": "Stake Ranked Episode 6",
+      "match": "Inner Circul vs Sangal",
+      "pick": "- 2,5 map",
+      "odds": 1.85,
+      "result": "won",
       "stake": 1000
     }
   ]
