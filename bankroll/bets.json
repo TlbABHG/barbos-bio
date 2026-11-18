@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 20000,
     "unit": "€",
-    "updatedAt": "2026-11-17T17:02:16.889Z"
+    "updatedAt": "2026-11-18T10:29:57.689Z"
   },
   "bets": [
     {
@@ -43,6 +43,16 @@
       "pick": "- 2,5 map",
       "odds": 1.5,
       "result": "won",
+      "stake": 1000
+    },
+    {
+      "id": "bmwlzccvttnz9",
+      "date": "2026-11-18",
+      "tournament": "Stake Ranked Episode 6",
+      "match": "NIP vs Luminosity",
+      "pick": "Vainqueur NIP",
+      "odds": 1.45,
+      "result": "pending",
       "stake": 1000
     }
   ]
