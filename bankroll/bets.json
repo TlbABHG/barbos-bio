@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 20000,
     "unit": "€",
-    "updatedAt": "2026-11-18T18:45:25.769Z"
+    "updatedAt": "2026-11-18T20:47:01.244Z"
   },
   "bets": [
     {
@@ -52,7 +52,7 @@
       "match": "NIP vs Luminosity",
       "pick": "Vainqueur NIP",
       "odds": 1.45,
-      "result": "pending",
+      "result": "lost",
       "stake": 1000
     },
     {
