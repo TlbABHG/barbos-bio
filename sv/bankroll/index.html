@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bankroll · Barbos Analytic</title>
+<meta name="description" content="Alla resultat från Barbos Analytics CS2-spel: sedan start, per turnering och per månad.">
+<meta property="og:title" content="Bankroll · Barbos Analytic">
+<meta property="og:description" content="Alla resultat från kanalens spel: sedan start, per turnering och per månad.">
+<meta property="og:image" content="https://barbos-analytic.com/sv/images/logo.jpg">
+<meta property="og:url" content="https://barbos-analytic.com/sv/bankroll/">
+<link rel="icon" href="../images/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#06070A">
+<link rel="stylesheet" href="../../bankroll/assets/bankroll.css">
+</head>
+<body>
+<div class="glow"></div>
+<div class="wrap">
+
+  <header class="top">
+    <a class="brand" href="../">
+      <img src="../images/logo.jpg" alt="">
+      <div><b>Barbos <span>Analytic</span></b><small>Bankroll <i aria-hidden="true"></i> CS2</small></div>
+    </a>
+    <a class="top-link" href="https://t.me/+4NFTGrUjvO9lZGM0">Telegram</a>
+  </header>
+
+  <nav class="tabs" aria-label="Resultatvyer">
+    <a href="#start">Sedan start</a>
+    <a href="#turneringar">Per turnering</a>
+    <a href="#manader">Per månad</a>
+  </nav>
+
+  <main id="view" aria-live="polite">
+    <p class="empty">Laddar resultat…</p>
+  </main>
+
+  <footer class="disclaimer">
+    <p id="updated"></p>
+    <p>Tidigare resultat är ingen garanti för framtida resultat. 18 års åldersgräns.</p>
+    <p>Spel kan leda till skulder, isolering och beroende. Behöver du stöd? Ring Stödlinjen på 020-81 91 00 (avgiftsfritt) eller besök stodlinjen.se.</p>
+  </footer>
+</div>
+
+<script src="assets/bankroll.js"></script>
+<script>
+(function () {
+  'use strict';
+  var B = window.Bankroll, el = B.el;
+  var view = document.getElementById('view'), tabs = document.querySelector('.tabs');
+  var TABS = { start: 'Sedan start', turneringar: 'Per turnering', manader: 'Per månad' };
+  var data;
+
+  fetch('../../bankroll/bets.json?v=' + Date.now(), { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (d) {
+      data = B.normalize(d);
+      if (data.settings.updatedAt) {
+        document.getElementById('updated').textContent = 'Uppdaterad ' +
+          new Date(data.settings.updatedAt).toLocaleString('sv-SE', { dateStyle: 'long', timeStyle: 'short' }) + '.';
+      }
+      route();
+      window.addEventListener('hashchange', function () {
+        route();
+        var top = tabs.getBoundingClientRect().top;
+        if (top < 0) window.scrollTo({ top: window.scrollY + top - 12, behavior: 'instant' });
+      });
+    })
+    .catch(function () {
+      B.fill(view, [el('p', { class: 'card empty', text: 'Det gick inte att ladda resultaten. Ladda om sidan om en liten stund.' })]);
+    });
+
+  function route() {
+    var raw = location.hash.slice(1), cut = raw.indexOf('/');
+    var tab = cut < 0 ? raw : raw.slice(0, cut), key = '';
+    if (cut >= 0) { try { key = decodeURIComponent(raw.slice(cut + 1)); } catch (e) { key = ''; } }
+    if (!TABS[tab]) { tab = 'start'; key = ''; }
+    tabs.querySelectorAll('a').forEach(function (a) {
+      if (a.getAttribute('href') === '#' + tab) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+    var title = TABS[tab];
+    var nodes;
+    if (tab === 'turneringar') nodes = key ? tournamentView(key) : tournamentsView();
+    else if (tab === 'manader') nodes = key ? monthView(key) : monthsView();
+    else nodes = overview();
+    if (key) title = tab === 'manader' ? B.monthLabel(key) : key;
+    document.title = title + ' · Bankroll · Barbos Analytic';
+    B.fill(view, nodes);
+  }
+
+  function section(title, content) {
+    return el('section', { class: 'block' }, [el('h2', { class: 'section', text: title }), content]);
+  }
+  function noBets() {
+    return [el('p', { class: 'card empty', text: 'Inga spel publicerade ännu. Resultaten visas här så snart det första spelet är lagt.' })];
+  }
+  function pendingOf(bets) { return bets.filter(function (b) { return b.result === 'pending'; }); }
+  function settledOf(bets) { return bets.filter(function (b) { return b.result !== 'pending'; }); }
+
+  // Bloc commun aux vues détaillées : stats, paris en cours, courbe, historique.
+  function details(bets, heroLabel, sub, opts) {
+    var unit = data.settings.unit, s = B.stats(bets), pending = pendingOf(bets);
+    return [
+      B.hero(heroLabel, s, unit, sub),
+      B.statTiles(s, unit),
+      pending.length ? section('Pågående (' + pending.length + ')', B.betList(pending, unit, opts)) : null,
+      section('Resultatutveckling', el('div', { class: 'card' }, [B.profitChart(bets, unit)])),
+      section('Historik', B.betList(settledOf(bets), unit, Object.assign({ emptyText: 'Inga avgjorda spel ännu.' }, opts)))
+    ];
+  }
+
+  function overview() {
+    var bets = data.bets;
+    if (!bets.length) return noBets();
+    var s = B.stats(bets), first = B.chrono(bets)[0].date;
+    return details(bets, 'Resultat sedan start', 'Sedan ' + B.dateLabel(first) + ' · ' + B.plural(s.count, 'spel', 'spel'), {});
+  }
+
+  function tournamentsView() {
+    var groups = B.byTournament(data.bets);
+    if (!groups.size) return noBets();
+    return [
+      el('p', { class: 'lead', text: 'Varje turnering med sitt eget resultat. Tryck på en turnering för att se alla dess spel.' }),
+      B.groupList(groups, {
+        unit: data.settings.unit, range: true,
+        label: function (k) { return k; },
+        href: function (k) { return '#turneringar/' + encodeURIComponent(k); }
+      })
+    ];
+  }
+
+  function tournamentView(name) {
+    var bets = data.bets.filter(function (b) { return B.tournamentOf(b) === name; });
+    var back = el('a', { class: 'back', href: '#turneringar', text: '← Alla turneringar' });
+    if (!bets.length) return [back, el('p', { class: 'card empty', text: 'Turneringen hittades inte.' })];
+    var sorted = B.chrono(bets);
+    return [back, el('h1', { class: 'detail-title', text: name })].concat(details(bets, 'Resultat i turneringen',
+      B.rangeLabel(sorted[0].date, sorted[sorted.length - 1].date) + ' · ' + B.plural(bets.length, 'spel', 'spel'),
+      { showTournament: false }));
+  }
+
+  function monthsView() {
+    var groups = B.byMonth(data.bets);
+    if (!groups.size) return noBets();
+    return [
+      el('p', { class: 'lead', text: 'Resultatet för varje månad för sig. Tryck på en månad för att se dess spel.' }),
+      B.groupList(groups, {
+        unit: data.settings.unit,
+        label: B.monthLabel,
+        href: function (k) { return '#manader/' + k; }
+      })
+    ];
+  }
+
+  function monthView(key) {
+    var bets = /^\d{4}-\d{2}$/.test(key) ? data.bets.filter(function (b) { return B.monthOf(b) === key; }) : [];
+    var back = el('a', { class: 'back', href: '#manader', text: '← Alla månader' });
+    if (!bets.length) return [back, el('p', { class: 'card empty', text: 'Inga spel den här månaden.' })];
+    return [back, el('h1', { class: 'detail-title', text: B.monthLabel(key) })].concat(details(bets, 'Månadens resultat',
+      B.plural(bets.length, 'spel', 'spel'), {}));
+  }
+})();
+</script>
+</body>
+</html>
