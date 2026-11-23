@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#06070A">
-<link rel="stylesheet" href="../../bankroll/assets/bankroll.css?v=2">
+<link rel="stylesheet" href="/bankroll/assets/bankroll.css?v=2">
 </head>
 <body>
 <div class="glow"></div>
@@ -53,7 +53,7 @@
   var TABS = { start: 'Sedan start', turneringar: 'Per turnering', manader: 'Per månad' };
   var data;
 
-  fetch('../../bankroll/bets.json?v=' + Date.now(), { cache: 'no-store' })
+  fetch('/bankroll/bets.json?v=' + Date.now(), { cache: 'no-store' })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function (d) {
       data = B.normalize(d);

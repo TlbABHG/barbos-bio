@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#06070A">
-<link rel="stylesheet" href="../../../bankroll/assets/bankroll.css?v=2">
+<link rel="stylesheet" href="/bankroll/assets/bankroll.css?v=2">
 <style>
   .app{display:flex;flex-direction:column;gap:22px}
   .app[hidden],[hidden]{display:none !important}
@@ -194,7 +194,7 @@
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
-<script src="../../../bankroll/assets/vault.js?v=2"></script>
+<script src="/bankroll/assets/vault.js?v=2"></script>
 <script src="../assets/bankroll.js?v=2"></script>
 <script>
 (function () {
@@ -253,7 +253,7 @@
     load: function () {
       var saved = storage('get', LOCAL_KEY);
       if (saved) return Promise.resolve({ data: JSON.parse(saved), sha: 'local' });
-      return fetch('../../../bankroll/bets.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
+      return fetch('/bankroll/bets.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
         .then(function (d) { return { data: d, sha: 'local' }; });
     },
     save: function (data) { storage('set', LOCAL_KEY, JSON.stringify(data)); return Promise.resolve('local'); }
