@@ -56,6 +56,9 @@
     return bet;
   }
 
+  // Pari VIP sans résultat : jamais publié (voir vault.js), visible seulement dans l'admin.
+  function isPrivate(bet) { return !!bet.vip && bet.result === 'pending'; }
+
   function betTitle(bet) { return isCombo(bet) ? 'Kombination · ' + plural(bet.legs.length, 'val', 'val') : bet.match || '—'; }
   function betPick(bet) {
     return isCombo(bet) ? bet.legs.map(function (l) { return pickText(l.pick); }).join(' + ') : pickText(bet.pick);
@@ -211,15 +214,22 @@
     }));
   }
 
+  function vipBadge() {
+    var icon = svg('svg', { viewBox: '0 0 24 24', width: 11, height: 11, 'aria-hidden': 'true' });
+    icon.appendChild(svg('path', { d: 'M3 7.5l4.6 3.9L12 4l4.4 7.4L21 7.5 19.2 18H4.8z' }));
+    return el('span', { class: 'vip-badge', title: 'VIP-spel' }, [icon, 'VIP']);
+  }
+
   function betRow(bet, unit, opts) {
     var p = profit(bet);
     var meta = [dateLabel(bet.date)];
     if (opts.showTournament !== false) meta.push(tournamentOf(bet));
     meta.push('insats' + NBSP + money(num(bet.stake), unit));
+    if (isPrivate(bet)) meta.push('privat tills resultatet är klart');
     var combo = isCombo(bet);
-    return el('li', { class: 'bet' + (combo ? ' bet-combo' : '') }, [
+    return el('li', { class: 'bet' + (combo ? ' bet-combo' : '') + (bet.vip ? ' bet-vip' : '') }, [
       el('div', { class: 'bet-main' }, [
-        el('div', { class: 'bet-top' }, [el('span', { class: 'bet-match', text: betTitle(bet) }), pill(bet.result)]),
+        el('div', { class: 'bet-top' }, [el('span', { class: 'bet-match', text: betTitle(bet) }), bet.vip ? vipBadge() : null, pill(bet.result)]),
         el('div', { class: 'bet-pick' }, [combo ? 'Totalodds' : pickText(bet.pick), el('span', { class: 'bet-odds', text: NBSP + '@' + NBSP + odds(bet.odds) })]),
         el('div', { class: 'bet-meta', text: meta.join(' · ') })
       ]),
@@ -414,7 +424,7 @@
     RESULTS: RESULTS,
     normalize: normalize, profit: profit, stats: stats, chrono: chrono, round2: round2,
     isCombo: isCombo, settleCombo: settleCombo, betTitle: betTitle, betPick: betPick, pickText: pickText,
-    tournamentOf: tournamentOf, monthOf: monthOf,
+    tournamentOf: tournamentOf, monthOf: monthOf, isPrivate: isPrivate,
     byTournament: function (bets) { return groupBy(bets, tournamentOf); },
     byMonth: function (bets) { return groupBy(bets, monthOf); },
     signed: signed, money: money, percent: percent, odds: odds, tone: tone, plural: plural,

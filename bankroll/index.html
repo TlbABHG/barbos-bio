@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#06070A">
-<link rel="stylesheet" href="assets/bankroll.css">
+<link rel="stylesheet" href="assets/bankroll.css?v=2">
 </head>
 <body>
 <div class="glow"></div>
@@ -44,7 +44,7 @@
   </footer>
 </div>
 
-<script src="assets/bankroll.js"></script>
+<script src="assets/bankroll.js?v=2"></script>
 <script>
 (function () {
   'use strict';
@@ -57,6 +57,8 @@
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function (d) {
       data = B.normalize(d);
+      // Sécurité : un pari VIP en attente ne doit jamais apparaître ici (l'admin le garde chiffré).
+      data.bets = data.bets.filter(function (b) { return !B.isPrivate(b); });
       if (data.settings.updatedAt) {
         document.getElementById('updated').textContent = 'Mis à jour le ' +
           new Date(data.settings.updatedAt).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' }) + '.';

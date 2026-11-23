@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#06070A">
-<link rel="stylesheet" href="../assets/bankroll.css">
+<link rel="stylesheet" href="../assets/bankroll.css?v=2">
 <style>
   .app{display:flex;flex-direction:column;gap:22px}
   .app[hidden],[hidden]{display:none !important}
@@ -71,6 +71,14 @@
   .combo-total b{font-size:17px;color:var(--gold)}
   .leg-actions{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 2px 22px}
   .leg-actions .mini{min-height:32px;padding:0 10px;font-size:12.5px}
+
+  .form .vip-toggle{flex-direction:row;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;cursor:pointer;
+    background:var(--bg);border:1px solid var(--line-strong);font-size:14px;font-weight:700;color:var(--text)}
+  .form .vip-toggle input{flex:none;width:20px;height:20px;min-height:0;margin:0;padding:0;accent-color:var(--gold);cursor:pointer}
+  .form .vip-toggle small{display:block;font-size:12.5px;font-weight:500;color:var(--muted)}
+  .form .vip-toggle:has(input:checked){border-color:rgba(232,185,49,.7);background:rgba(232,185,49,.07)}
+  .vip-card{display:flex;flex-direction:column;gap:12px;border-color:rgba(232,185,49,.45)}
+  .vip-card > .section{margin-bottom:0}
 </style>
 </head>
 <body>
@@ -104,6 +112,16 @@
     <span id="localBadge" class="local-badge" hidden>Mode test local : rien n’est envoyé sur GitHub</span>
     <div id="summary"></div>
 
+    <section id="vipCard" class="card vip-card" hidden>
+      <h2 class="section">Paris VIP</h2>
+      <p class="note" id="vipText"></p>
+      <form id="vipForm" class="row" autocomplete="off">
+        <input id="vipPass" class="search" type="password" autocomplete="new-password" placeholder="Mot de passe VIP" aria-label="Mot de passe VIP" required>
+        <input id="vipConfirm" class="search" type="password" autocomplete="new-password" placeholder="Confirme le mot de passe" aria-label="Confirme le mot de passe" required>
+        <button id="vipBtn" class="btn solid" type="submit">Déverrouiller</button>
+      </form>
+    </section>
+
     <section id="formCard" class="card">
       <h2 class="section" id="formTitle">Nouveau pari</h2>
       <form id="betForm" class="form" autocomplete="off">
@@ -111,6 +129,11 @@
           <label><input type="radio" name="type" value="single" checked><span>Pari simple</span></label>
           <label><input type="radio" name="type" value="combo"><span>Pari combiné</span></label>
         </div>
+        <label class="wide vip-toggle">
+          <input type="checkbox" name="vip">
+          <span class="vip-badge" aria-hidden="true"><svg viewBox="0 0 24 24" width="11" height="11"><path d="M3 7.5l4.6 3.9L12 4l4.4 7.4L21 7.5 19.2 18H4.8z"/></svg>VIP</span>
+          <span>Pari VIP<small>Caché de la page publique tant qu’il est en attente de résultat.</small></span>
+        </label>
         <label>Date <input name="date" type="date" required></label>
         <label><span>Mise (<span class="unit-label">€</span>)</span> <input name="stake" type="number" step="0.01" min="0.01" inputmode="decimal" required placeholder="10"></label>
         <label class="wide">Tournoi <input name="tournament" list="tournamentList" required placeholder="IEM Chengdu 2026"></label>
@@ -162,6 +185,7 @@
         <label class="wide">Bankroll de départ (€) <input name="startBankroll" type="number" step="0.01" min="0" inputmode="decimal" required></label>
         <div class="wide"><button class="btn" type="submit">Enregistrer les réglages</button></div>
       </form>
+      <p class="note" id="vipStatus" hidden>Mot de passe VIP enregistré sur ce navigateur. <button id="vipForget" class="linkbtn" type="button">L’oublier</button></p>
     </section>
 
     <p class="note"><button id="logout" class="linkbtn" type="button">Se déconnecter de ce navigateur</button></p>
@@ -169,20 +193,23 @@
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
-<script src="../assets/bankroll.js"></script>
+<script src="../assets/vault.js?v=2"></script>
+<script src="../assets/bankroll.js?v=2"></script>
 <script>
 (function () {
   'use strict';
-  var B = window.Bankroll, el = B.el;
+  var B = window.Bankroll, V = window.BankrollVault, el = B.el;
   var OWNER = 'TlbABHG', REPO = 'barbos-bio', BRANCH = 'main', FILE = 'bankroll/bets.json';
   var API = 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/' + FILE;
-  var TOKEN_KEY = 'barbos-bankroll-token', LOCAL_KEY = 'barbos-bankroll-local';
+  var TOKEN_KEY = 'barbos-bankroll-token', LOCAL_KEY = 'barbos-bankroll-local', VIP_KEY = 'barbos-bankroll-vip';
   // Sur localhost avec ?local, les paris restent dans ce navigateur : pratique pour tester sans toucher au site.
   var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && /[?&]local\b/.test(location.search);
 
   var $ = function (id) { return document.getElementById(id); };
   var form = $('betForm'), settingsForm = $('settingsForm');
-  var state = { data: null, sha: null, editId: null, queue: Promise.resolve() };
+  // vault : coffre chiffré des paris VIP en attente, tel qu'il est dans bets.json.
+  // pass : mot de passe VIP, seulement quand le coffre est ouvert (ou pas encore créé).
+  var state = { data: null, sha: null, editId: null, queue: Promise.resolve(), vault: null, pass: null, hiddenJson: null, afterVip: null };
   var token = storage('get', TOKEN_KEY) || '';
 
   function storage(op, key, value) {
@@ -240,6 +267,7 @@
   };
 
   function explain(e) {
+    if (e.crypto) return 'Impossible de chiffrer les paris VIP sur ce navigateur.';
     if (!e.status) return 'Impossible de joindre GitHub. Vérifie ta connexion internet.';
     if (e.status === 401) return 'Token refusé (invalide ou expiré). Connecte-toi avec un nouveau token.';
     if (e.status === 403 || e.status === 404) return 'Ce token n’a pas accès à bankroll/bets.json dans barbos-bio. Il faut « Contents : Read and write » sur ce dépôt.';
@@ -263,27 +291,131 @@
     return store.load().then(function (res) {
       state.data = B.normalize(res.data);
       state.sha = res.sha;
+      state.vault = (res.data && res.data.vipVault) || null;
       state.data.bets.forEach(function (b) { if (!b.id) b.id = newId(); });
-      $('login').hidden = true;
-      $('app').hidden = false;
-      toast();
-      render();
+      // Rechargement (conflit) : on rouvre le coffre relu, sinon il serait réécrit vide.
+      var saved = storage('get', VIP_KEY) || state.pass;
+      state.pass = null;
+      state.hiddenJson = null;
+      return unlock(saved).then(function (ok) {
+        if (saved && !ok) storage('remove', VIP_KEY);
+        $('login').hidden = true;
+        $('app').hidden = false;
+        toast();
+        render();
+        if (state.vault && !ok) {
+          askVip(null, true, saved ? 'Le mot de passe VIP enregistré sur ce navigateur ne fonctionne plus. ' : '');
+        }
+      });
     }, function (e) {
       if (e.status === 401 || e.status === 403 || e.status === 404) logout(false);
       toast('error', explain(e));
     });
   }
 
+  /* ---------- Paris VIP : coffre chiffré ---------- */
+
+  // Ouvre le coffre avec ce mot de passe et ajoute ses paris à la liste.
+  // Sans coffre, tout mot de passe est accepté : il deviendra celui du coffre.
+  function unlock(pass) {
+    if (!pass) return Promise.resolve(false);
+    var opened = state.vault ? V.open(state.vault, pass) : Promise.resolve([]);
+    return opened.then(function (bets) {
+      var hidden = B.normalize({ bets: bets }).bets;
+      hidden.forEach(function (b) { if (!b.id) b.id = newId(); });
+      state.data.bets = state.data.bets.concat(hidden);
+      state.pass = pass;
+      state.hiddenJson = JSON.stringify(state.data.bets.filter(B.isPrivate));
+      return true;
+    }, function () { return false; });
+  }
+
+  // Contenu publié : les paris VIP en attente vont dans le coffre, jamais en clair.
+  function toFile(next) {
+    var hidden = next.bets.filter(B.isPrivate), json = JSON.stringify(hidden);
+    var file = { settings: next.settings, bets: next.bets.filter(function (b) { return !B.isPrivate(b); }) };
+    if (!state.pass || (state.vault && json === state.hiddenJson)) {
+      if (state.vault) file.vipVault = state.vault;  // coffre verrouillé ou inchangé : recopié tel quel
+      return Promise.resolve(file);
+    }
+    if (!state.vault && !hidden.length) return Promise.resolve(file);
+    return V.seal(hidden, state.pass, state.vault).then(function (vault) {
+      file.vipVault = vault;
+      return file;
+    }, function () {
+      var e = new Error('chiffrement impossible');
+      e.crypto = true;
+      throw e;
+    });
+  }
+
+  // Nom utilisé dans les commits (publics) : un pari VIP en attente reste anonyme.
+  function nameOf(bet) { return B.isPrivate(bet) ? 'pari VIP' : B.betTitle(bet); }
+
+  // then : action à relancer une fois le coffre ouvert. quiet : ne pas faire défiler la page.
+  function askVip(then, quiet, prefix) {
+    var create = !state.vault;
+    state.afterVip = then || null;
+    $('vipText').textContent = (prefix || '') + (create
+      ? 'Choisis un mot de passe VIP (8 caractères minimum). Il chiffre tes paris VIP en attente pour que personne d’autre ne puisse les lire avant le résultat. Note-le bien : sans lui, les paris VIP en attente sont illisibles.'
+      : 'Tes paris VIP en attente sont chiffrés : personne ne peut les lire sans ton mot de passe VIP. Entre-le pour les voir, en ajouter ou mettre leur résultat.');
+    $('vipConfirm').hidden = !create;
+    $('vipConfirm').disabled = !create;
+    $('vipBtn').textContent = create ? 'Enregistrer le mot de passe' : 'Déverrouiller';
+    $('vipCard').hidden = false;
+    if (!quiet) {
+      $('vipCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      $('vipPass').focus({ preventScroll: true });
+    }
+  }
+
+  $('vipForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var pass = $('vipPass').value, create = !state.vault, btn = $('vipBtn');
+    if (create && pass.length < 8) { toast('error', 'Choisis au moins 8 caractères.'); return; }
+    if (create && pass !== $('vipConfirm').value) { toast('error', 'Les deux mots de passe ne correspondent pas.'); return; }
+    btn.disabled = true;
+    toast('', 'Vérification…');
+    unlock(pass).then(function (ok) {
+      btn.disabled = false;
+      if (!ok) { toast('error', 'Mot de passe VIP incorrect.'); return; }
+      storage('set', VIP_KEY, pass);
+      $('vipPass').value = '';
+      $('vipConfirm').value = '';
+      $('vipCard').hidden = true;
+      toast('ok', create ? 'Mot de passe VIP enregistré.' : 'Paris VIP déverrouillés.');
+      render();
+      var then = state.afterVip;
+      state.afterVip = null;
+      if (then) then();
+    });
+  });
+
+  $('vipForget').addEventListener('click', function () {
+    storage('remove', VIP_KEY);
+    location.reload();
+  });
+
   // Chaque action = un enregistrement (un commit). Les actions passent l'une après l'autre.
   function commit(mutate, message) {
     state.queue = state.queue.then(function () {
-      var next = JSON.parse(JSON.stringify(state.data));
+      var next = JSON.parse(JSON.stringify(state.data)), file;
       mutate(next);
+      if (!state.pass && next.bets.some(B.isPrivate)) {
+        askVip();
+        toast('error', 'Déverrouille d’abord les paris VIP avec ton mot de passe VIP.');
+        return false;
+      }
       next.settings.updatedAt = new Date().toISOString();
       toast('', 'Enregistrement…');
-      return store.save(next, state.sha, message).then(function (sha) {
+      return toFile(next).then(function (f) {
+        file = f;
+        return store.save(file, state.sha, message);
+      }).then(function (sha) {
         state.data = next;
         state.sha = sha;
+        state.vault = file.vipVault || null;
+        if (state.pass) state.hiddenJson = JSON.stringify(next.bets.filter(B.isPrivate));
         render();
         toast('ok', LOCAL ? 'Enregistré (test local).' : 'Enregistré. Visible sur la page publique d’ici 1 à 2 minutes.');
         return true;
@@ -324,6 +456,7 @@
     if (!settingsForm.contains(document.activeElement)) {
       settingsForm.elements.startBankroll.value = d.settings.startBankroll;
     }
+    $('vipStatus').hidden = !state.pass;
   }
 
   function renderHistory() {
@@ -371,15 +504,19 @@
   function setLegResult(id, i, result) {
     var bet = find(state.data, id);
     if (!bet) return;
+    var after = JSON.parse(JSON.stringify(bet));
+    after.legs[i].result = result;
+    B.settleCombo(after);
     commit(function (d) { var b = find(d, id); b.legs[i].result = result; B.settleCombo(b); },
-      'Bankroll : combiné, ' + bet.legs[i].match + ' → ' + B.RESULTS[result].label.toLowerCase());
+      B.isPrivate(after) ? 'Bankroll : pari VIP mis à jour'
+        : 'Bankroll : combiné, ' + bet.legs[i].match + ' → ' + B.RESULTS[result].label.toLowerCase());
   }
 
   function remove(id) {
     var bet = find(state.data, id);
     if (!bet || !confirm('Supprimer le pari « ' + B.betTitle(bet) + ' · ' + B.betPick(bet) + ' » ?')) return;
     if (state.editId === id) resetForm(false);
-    commit(function (d) { d.bets = d.bets.filter(function (b) { return b.id !== id; }); }, 'Bankroll : suppression ' + B.betTitle(bet));
+    commit(function (d) { d.bets = d.bets.filter(function (b) { return b.id !== id; }); }, 'Bankroll : suppression ' + nameOf(bet));
   }
 
   function edit(id) {
@@ -387,6 +524,7 @@
     if (!bet) return;
     state.editId = id;
     ['date', 'tournament', 'stake'].forEach(function (k) { form.elements[k].value = bet[k] == null ? '' : bet[k]; });
+    form.elements.vip.checked = !!bet.vip;
     if (B.isCombo(bet)) setMode('combo', bet.legs);
     else {
       setMode('single', []);
@@ -401,10 +539,10 @@
 
   // keep : garde la date, le tournoi et la mise pour enchaîner les saisies.
   function resetForm(keep) {
-    var f = form.elements, kept = { date: f.date.value, tournament: f.tournament.value, stake: f.stake.value, mode: currentMode() };
+    var f = form.elements, kept = { date: f.date.value, tournament: f.tournament.value, stake: f.stake.value, vip: f.vip.checked, mode: currentMode() };
     form.reset();
     f.date.value = keep && kept.date ? kept.date : B.today();
-    if (keep) { f.tournament.value = kept.tournament; f.stake.value = kept.stake; }
+    if (keep) { f.tournament.value = kept.tournament; f.stake.value = kept.stake; f.vip.checked = kept.vip; }
     setMode(keep ? kept.mode : 'single', []);
     state.editId = null;
     $('formTitle').textContent = 'Nouveau pari';
@@ -504,7 +642,10 @@
     }
     bet.stake = B.round2(parseFloat(f.stake.value));
     if (!(bet.stake > 0)) { toast('error', 'La mise doit être positive.'); return; }
+    if (f.vip.checked) bet.vip = true;
     if (bet.type === 'combo') B.settleCombo(bet);
+    // Pari VIP en attente : il faut le mot de passe VIP pour le chiffrer avant l'envoi.
+    if (B.isPrivate(bet) && !state.pass) { askVip(function () { $('submitBtn').click(); }); return; }
     var editId = state.editId, btn = $('submitBtn');
     btn.disabled = true;
     commit(function (d) {
@@ -514,7 +655,7 @@
       } else {
         d.bets.push(Object.assign({ id: newId() }, bet));
       }
-    }, (editId ? 'Bankroll : modification ' : 'Bankroll : ajout ') + B.betTitle(bet)).then(function (ok) {
+    }, (editId ? 'Bankroll : modification ' : 'Bankroll : ajout ') + nameOf(bet)).then(function (ok) {
       btn.disabled = false;
       if (!ok) return;
       resetForm(true);
@@ -544,6 +685,7 @@
   function logout(reload) {
     token = '';
     storage('remove', TOKEN_KEY);
+    storage('remove', VIP_KEY);
     if (reload) { location.reload(); return; }
     $('app').hidden = true;
     $('login').hidden = false;
