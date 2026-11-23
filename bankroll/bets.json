@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 20000,
     "unit": "€",
-    "updatedAt": "2026-11-18T20:47:01.244Z"
+    "updatedAt": "2026-11-23T16:05:19.351Z"
   },
   "bets": [
     {
@@ -63,6 +63,16 @@
       "pick": "- 2,5 map",
       "odds": 1.85,
       "result": "won",
+      "stake": 1000
+    },
+    {
+      "id": "bmwtgiw6vyijl",
+      "date": "2026-11-24",
+      "tournament": "PGL Master Singapour",
+      "match": "Heroic vs Imperial",
+      "pick": "Vainqueur Heroic",
+      "odds": 1.48,
+      "result": "pending",
       "stake": 1000
     }
   ]
