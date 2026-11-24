@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 20000,
     "unit": "€",
-    "updatedAt": "2026-11-24T06:33:08.306Z"
+    "updatedAt": "2026-11-24T06:33:59.843Z"
   },
   "bets": [
     {
@@ -63,7 +63,8 @@
       "pick": "- 2,5 map",
       "odds": 1.85,
       "result": "won",
-      "stake": 1000
+      "stake": 1000,
+      "vip": true
     },
     {
       "id": "bmwtgiw6vyijl",
