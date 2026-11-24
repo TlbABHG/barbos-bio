@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 20000,
     "unit": "€",
-    "updatedAt": "2026-11-23T16:05:19.351Z"
+    "updatedAt": "2026-11-24T06:22:07.818Z"
   },
   "bets": [
     {
@@ -72,7 +72,7 @@
       "match": "Heroic vs Imperial",
       "pick": "Vainqueur Heroic",
       "odds": 1.48,
-      "result": "pending",
+      "result": "lost",
       "stake": 1000
     }
   ]
