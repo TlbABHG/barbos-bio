@@ -2,7 +2,7 @@
   "settings": {
     "startBankroll": 20000,
     "unit": "€",
-    "updatedAt": "2026-11-24T06:33:59.843Z"
+    "updatedAt": "2026-11-25T06:43:46.547Z"
   },
   "bets": [
     {
@@ -74,6 +74,16 @@
       "pick": "Vainqueur Heroic",
       "odds": 1.48,
       "result": "lost",
+      "stake": 1000
+    },
+    {
+      "id": "bmwvrcfznjevn",
+      "date": "2026-11-25",
+      "tournament": "PGL Master Singapour",
+      "match": "Heroic vs M80",
+      "pick": "Vainqueur Heroic",
+      "odds": 1.52,
+      "result": "pending",
       "stake": 1000
     }
   ],
